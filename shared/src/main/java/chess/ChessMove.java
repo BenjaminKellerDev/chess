@@ -8,15 +8,20 @@ package chess;
  */
 public class ChessMove {
 
-    ChessPosition startPosition;
-    ChessPosition endPosition;
-    ChessPiece.PieceType promotionPiece;
+    private ChessPosition startPosition;
+    private ChessPosition endPosition;
+    private ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionPiece = promotionPiece;
+    }
+
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition)
+    {
+        this(startPosition,endPosition,null);
     }
 
     /**
@@ -45,7 +50,7 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "ChessMove{}";
+        return String.format("ChessMove{%s,%s,%s}",startPosition,endPosition,promotionPiece);
     }
 
     @Override

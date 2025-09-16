@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents a single chess piece
@@ -9,10 +11,10 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    ChessGame.TeamColor pieceColor;
-    ChessPiece.PieceType type;
+    private ChessGame.TeamColor pieceColor;
+    private PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
     }
@@ -51,6 +53,46 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        List<ChessMove> possibleMoves = new ArrayList<ChessMove>();
+        switch (type){
+            case KING:
+                break;
+            case QUEEN:
+                break;
+            case BISHOP:
+                break;
+            case KNIGHT:
+                break;
+            case ROOK:
+                //Column / x to the right
+                for (int x = myPosition.getColumn(); x < board.size; x++) {
+                    ChessPosition positionToCheck =new ChessPosition(myPosition.getRow(),x);
+                    if(board.getPiece(positionToCheck) == null)
+                    {
+                        possibleMoves.add(new ChessMove(myPosition,positionToCheck));
+                    }
+                    else {
+                        break;
+                    }
+                }
+                for (int x = myPosition.getColumn(); x > 0; x--) {
+                    ChessPosition positionToCheck =new ChessPosition(x, myPosition.getRow());
+                    if(board.getPiece(positionToCheck) == null)
+                    {
+                        possibleMoves.add(new ChessMove(myPosition,positionToCheck));
+                    }
+                    else {
+                        break;
+                    }
+                }
+                break;
+            case PAWN:
+                break;
+            default:
+                throw new RuntimeException("Unknown piece type");
+        }
+        return possibleMoves;
     }
 }
+
+private class Rule

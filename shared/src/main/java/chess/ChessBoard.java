@@ -9,6 +9,8 @@ package chess;
 public class ChessBoard {
 
     final private ChessPiece[][] board = new ChessPiece[8][8];
+    final public int size = 8;
+
     public ChessBoard() {
         
     }
