@@ -52,47 +52,41 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+    //Column / x to the right
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         List<ChessMove> possibleMoves = new ArrayList<ChessMove>();
         switch (type){
             case KING:
+                possibleMoves.addAll(getMoves(board,myPosition,new int[][]{{1,1},{1,-1},{-1,1},{-1,-1},{1,0},{0,1},{-1,0},{0,-1}},false));
                 break;
             case QUEEN:
+                possibleMoves.addAll(getMoves(board,myPosition,new int[][]{{1,1},{1,-1},{-1,1},{-1,-1},{1,0},{0,1},{-1,0},{0,-1}},true));
                 break;
             case BISHOP:
+                possibleMoves.addAll(getMoves(board,myPosition,new int[][]{{1,1},{1,-1},{-1,1},{-1,-1}},true));
                 break;
             case KNIGHT:
+                possibleMoves.addAll(getMoves(board,myPosition,new int[][]{{2,1},{2,-1},{-2,1},{-2,-1},{1,2},{-1,2},{1,-2},{-1,-2}},false));
                 break;
             case ROOK:
-                //Column / x to the right
-                for (int x = myPosition.getColumn(); x < board.size; x++) {
-                    ChessPosition positionToCheck =new ChessPosition(myPosition.getRow(),x);
-                    if(board.getPiece(positionToCheck) == null)
-                    {
-                        possibleMoves.add(new ChessMove(myPosition,positionToCheck));
-                    }
-                    else {
-                        break;
-                    }
-                }
-                for (int x = myPosition.getColumn(); x > 0; x--) {
-                    ChessPosition positionToCheck =new ChessPosition(x, myPosition.getRow());
-                    if(board.getPiece(positionToCheck) == null)
-                    {
-                        possibleMoves.add(new ChessMove(myPosition,positionToCheck));
-                    }
-                    else {
-                        break;
-                    }
-                }
+                possibleMoves.addAll(getMoves(board,myPosition,new int[][]{{1,0},{0,1},{-1,0},{0,-1}},false));
                 break;
             case PAWN:
+                possibleMoves.addAll(getMovesPawn(board,myPosition));
                 break;
             default:
                 throw new RuntimeException("Unknown piece type");
         }
         return possibleMoves;
     }
-}
 
-private class Rule
+    List<ChessMove> getMoves(ChessBoard board, ChessPosition myPosition, int[][] directions, boolean repeat){
+        if(repeat) {
+
+        }
+    }
+
+    List<ChessMove> getMovesPawn(ChessBoard board, ChessPosition myPosition){
+        
+    }
+}
