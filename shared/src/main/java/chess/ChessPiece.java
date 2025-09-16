@@ -52,7 +52,6 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    //Column / x to the right
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         List<ChessMove> possibleMoves = new ArrayList<ChessMove>();
         switch (type){
@@ -81,12 +80,25 @@ public class ChessPiece {
     }
 
     List<ChessMove> getMoves(ChessBoard board, ChessPosition myPosition, int[][] directions, boolean repeat){
-        if(repeat) {
+        List<ChessMove> possibleMoves = new ArrayList<>();
 
+        for (var pos : directions)
+        {
+            //Column / x to the right
+            //Row / y
+            ChessPosition checkingPos = new ChessPosition(myPosition.getRow() + pos[1], myPosition.getColumn() + pos[0]);
+            //check for off board and reperting
+            if(board.getPiece(checkingPos) == null)
+            {
+                possibleMoves.add(new ChessMove(myPosition,checkingPos,null));
+            }
         }
+        return possibleMoves;
     }
 
     List<ChessMove> getMovesPawn(ChessBoard board, ChessPosition myPosition){
-        
+        List<ChessMove> possibleMoves = new ArrayList<>();
+
+        return possibleMoves;
     }
 }
