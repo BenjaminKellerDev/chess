@@ -56,7 +56,11 @@ public class ChessMove {
     @Override
     public int hashCode() {
         //todo add promotion peice hash
-        return (13 * startPosition.hashCode()) + (27 * endPosition.hashCode());
+        if (promotionPiece == null) {
+            return (13 * startPosition.hashCode()) + (27 * endPosition.hashCode());
+        } else {
+            return (13 * startPosition.hashCode()) + (27 * endPosition.hashCode() + (7 * promotionPiece.ordinal()));
+        }
     }
 
     @Override
