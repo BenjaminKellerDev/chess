@@ -23,13 +23,6 @@ public class ChessMove {
         this(startPosition, endPosition, null);
     }
 
-    public ChessMove(ChessPosition startPosition, int addRow, int addCol) {
-        this(startPosition, new ChessPosition(startPosition.getRow() + addRow, startPosition.getColumn() + addCol), null);
-    }
-
-    public ChessMove(ChessPosition startPosition, int addRow, int addCol, ChessPiece.PieceType promotionPiece) {
-        this(startPosition, new ChessPosition(startPosition.getRow() + addRow, startPosition.getColumn() + addCol), promotionPiece);
-    }
 
     /**
      * @return ChessPosition of starting location
