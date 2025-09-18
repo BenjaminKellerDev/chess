@@ -133,16 +133,30 @@ public class ChessPiece {
             System.out.printf("pawn move from %s to %s may be invalid", myPosition.toString(), checkingPos.toString());
             return possibleMoves;
         }
+        // set promotion piece if close
+        boolean canPromote = false;
+        if (checkingPos.getRow() == 8 && pieceColor == ChessGame.TeamColor.WHITE
+                || checkingPos.getRow() == 1 && pieceColor == ChessGame.TeamColor.BLACK) {
+            canPromote = true;
+        }
+
+        //check for validity of potential moves
         if (board.getPiece(checkingPos) == null || board.getPiece(checkingPos).pieceColor != pieceColor) {
-            PieceType promotionPiece = null;
-            possibleMoves.add(new ChessMove(myPosition, checkingPos, promotionPiece));
+            if (!canPromote) {
+                possibleMoves.add(new ChessMove(myPosition, checkingPos, null));
+            } else {
+                possibleMoves.add(new ChessMove(myPosition, checkingPos, PieceType.QUEEN));
+                possibleMoves.add(new ChessMove(myPosition, checkingPos, PieceType.ROOK));
+                possibleMoves.add(new ChessMove(myPosition, checkingPos, PieceType.BISHOP));
+                possibleMoves.add(new ChessMove(myPosition, checkingPos, PieceType.KNIGHT));
+            }
+
             //if pawn has not moved yet, check the next square too
             if ((myPosition.getRow() == 2 && pieceColor == ChessGame.TeamColor.WHITE)
                     || (myPosition.getRow() == 7 && pieceColor == ChessGame.TeamColor.BLACK)) {
-
                 checkingPos = new ChessPosition(myPosition.getRow() + dir * 2, myPosition.getColumn());
                 if (board.getPiece(checkingPos) == null || board.getPiece(checkingPos).pieceColor != pieceColor) {
-                    possibleMoves.add(new ChessMove(myPosition, checkingPos, promotionPiece));
+                    possibleMoves.add(new ChessMove(myPosition, checkingPos, null));
                 }
 
             }
