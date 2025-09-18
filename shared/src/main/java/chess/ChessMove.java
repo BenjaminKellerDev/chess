@@ -19,16 +19,23 @@ public class ChessMove {
         this.promotionPiece = promotionPiece;
     }
 
-    public ChessMove(ChessPosition startPosition, ChessPosition endPosition)
-    {
-        this(startPosition,endPosition,null);
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition) {
+        this(startPosition, endPosition, null);
+    }
+
+    public ChessMove(ChessPosition startPosition, int addRow, int addCol) {
+        this(startPosition, new ChessPosition(startPosition.getRow() + addRow, startPosition.getColumn() + addCol), null);
+    }
+
+    public ChessMove(ChessPosition startPosition, int addRow, int addCol, ChessPiece.PieceType promotionPiece) {
+        this(startPosition, new ChessPosition(startPosition.getRow() + addRow, startPosition.getColumn() + addCol), promotionPiece);
     }
 
     /**
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        return  startPosition;
+        return startPosition;
     }
 
     /**
@@ -50,16 +57,30 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return String.format("ChessMove{%s,%s,%s}",startPosition,endPosition,promotionPiece);
+        return String.format("ChessMove{%s,%s,%s}", startPosition, endPosition, promotionPiece);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        //todo add promotion peice hash
+        return (13 * startPosition.hashCode()) + (27 * endPosition.hashCode());
     }
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        ChessMove that = (ChessMove) obj;
+        if (that.startPosition.equals(this.startPosition)
+                && that.endPosition.equals(this.endPosition)
+                && that.promotionPiece == this.promotionPiece) {
+            return true;
+        }
+
+        return false;
     }
 }

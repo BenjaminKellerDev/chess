@@ -12,7 +12,7 @@ public class ChessBoard {
     final public int size = 8;
 
     public ChessBoard() {
-        
+
     }
 
     /**
@@ -22,7 +22,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn()-1] = piece;
+        board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -33,9 +33,21 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-
-        return board[position.getRow()-1][position.getColumn()-1];
+        if (!isPositionOffBoard(position)) {
+            return board[position.getRow() - 1][position.getColumn() - 1];
+        }
+        return null;
     }
+
+    public boolean isPositionOffBoard(ChessPosition position) {
+        if (position.getRow() - 1 > 7 || position.getColumn() - 1 > 7
+                || position.getRow() - 1 < 0 || position.getColumn() - 1 < 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)

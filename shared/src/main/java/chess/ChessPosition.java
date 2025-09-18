@@ -34,16 +34,27 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        return String.format("(r%d,c%d)",row,col);
+        return String.format("(r%d,c%d)", row, col);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+
+        return (71 * row) + (67 * col);
     }
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        ChessPosition that = (ChessPosition) obj;
+        if (that.row == this.row && that.col == this.col) {
+            return true;
+        }
+        return false;
     }
 }
