@@ -12,7 +12,7 @@ import java.util.List;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private ChessGame.TeamColor pieceColor;
+    private final ChessGame.TeamColor pieceColor;
     private PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
@@ -54,7 +54,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        List<ChessMove> possibleMoves = new ArrayList<ChessMove>();
+        List<ChessMove> possibleMoves = new ArrayList<>();
         switch (type) {
             case KING:
                 possibleMoves.addAll(getMoves(board, myPosition, new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}}, false));
@@ -132,7 +132,7 @@ public class ChessPiece {
         ChessPosition checkingPos = new ChessPosition(myPosition.getRow() + dir, myPosition.getColumn());
         //this may be invalid position,
         if (board.isPositionOffBoard(checkingPos)) {
-            System.out.printf("pawn move from %s to %s may be invalid", myPosition.toString(), checkingPos.toString());
+            System.out.printf("pawn move from %s to %s may be invalid", myPosition, checkingPos);
             return possibleMoves;
         }
         // set promotion piece if close
