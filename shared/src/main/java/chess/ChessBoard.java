@@ -155,11 +155,42 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        //if memory address is the same
+        if (this == obj) {
+            return true;
+        }
+        //if it's a different class
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        //check for reals
+        ChessBoard that = (ChessBoard) obj;
+        for (int i = 0; i < this.board.length; i++) {
+            for (int j = 0; j < this.board[i].length; j++) {
+                if (this.board[i][j] == null || that.board[i][j] == null) {
+                    if (!(this.board[i][j] == null && that.board[i][j] == null)) {
+                        return false;
+                    }
+                } else if (!this.board[i][j].equals(that.board[i][j])) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        int result = 0;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == null) {
+                    result += 31;
+                } else {
+                    result += board[i][j].hashCode();
+                }
+            }
+        }
+        return result;
     }
 }
