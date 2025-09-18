@@ -98,20 +98,19 @@ public class ChessPiece {
             }
             if (board.getPiece(checkingPos) == null || board.getPiece(checkingPos).pieceColor != pieceColor) {
                 possiblePositions.add(checkingPos);
-                if (repeat) {
-                    for (int i = 1; !board.isPositionOffBoard(checkingPos); i++) {
+                for (int i = 1; !board.isPositionOffBoard(checkingPos) && repeat; i++) {
+                    possiblePositions.add(checkingPos);
+                    checkingPos = new ChessPosition(myPosition.getRow() + (pos[1] * i), myPosition.getColumn() + (pos[0]) * i);
+                    ChessPiece checkingPiece = board.getPiece(checkingPos);
+                    if (checkingPiece == null) {
+                        continue;
+                    } else if (checkingPiece.pieceColor != pieceColor)// if enemy
+                    {
                         possiblePositions.add(checkingPos);
-                        checkingPos = new ChessPosition(myPosition.getRow() + (pos[1] * i), myPosition.getColumn() + (pos[0]) * i);
-                        ChessPiece checkingPiece = board.getPiece(checkingPos);
-                        if (checkingPiece == null) {
-                            continue;
-                        } else if (checkingPiece.pieceColor != pieceColor)// if enemy
-                        {
-                            possiblePositions.add(checkingPos);
-                        }
-                        break;
                     }
+                    break;
                 }
+
             }
         }
 

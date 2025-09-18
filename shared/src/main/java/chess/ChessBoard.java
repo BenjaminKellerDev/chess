@@ -97,56 +97,57 @@ public class ChessBoard {
                 }
                 if (board[i][j] == null) {
                     ss.append(" |");
-                } else {
-                    switch (board[i][j].getPieceType()) {
-                        case PAWN:
-                            if (isWhite) {
-                                ss.append("P|");
-                            } else {
-                                ss.append("p|");
-                            }
-                            break;
-                        case QUEEN:
-                            if (isWhite) {
-                                ss.append("Q|");
-                            } else {
-                                ss.append("q|");
-                            }
-                            break;
-                        case KING:
-                            if (isWhite) {
-                                ss.append("K|");
-                            } else {
-                                ss.append("k|");
-                            }
-                            break;
-                        case ROOK:
-                            if (isWhite) {
-                                ss.append("R|");
-                            } else {
-                                ss.append("r|");
-                            }
-                            break;
-                        case BISHOP:
-                            if (isWhite) {
-                                ss.append("B|");
-                            } else {
-                                ss.append("b|");
-                            }
-                            break;
-                        case KNIGHT:
-                            if (isWhite) {
-                                ss.append("N|");
-                            } else {
-                                ss.append("n|");
-                            }
-                            break;
-                        default:
-                            ss.append("?|");
-                            //throw new RuntimeException("Unknown piece type");
-                            break;
-                    }
+                    break;
                 }
+                switch (board[i][j].getPieceType()) {
+                    case PAWN:
+                        if (isWhite) {
+                            ss.append("P|");
+                        } else {
+                            ss.append("p|");
+                        }
+                        break;
+                    case QUEEN:
+                        if (isWhite) {
+                            ss.append("Q|");
+                        } else {
+                            ss.append("q|");
+                        }
+                        break;
+                    case KING:
+                        if (isWhite) {
+                            ss.append("K|");
+                        } else {
+                            ss.append("k|");
+                        }
+                        break;
+                    case ROOK:
+                        if (isWhite) {
+                            ss.append("R|");
+                        } else {
+                            ss.append("r|");
+                        }
+                        break;
+                    case BISHOP:
+                        if (isWhite) {
+                            ss.append("B|");
+                        } else {
+                            ss.append("b|");
+                        }
+                        break;
+                    case KNIGHT:
+                        if (isWhite) {
+                            ss.append("N|");
+                        } else {
+                            ss.append("n|");
+                        }
+                        break;
+                    default:
+                        ss.append("?|");
+                        //throw new RuntimeException("Unknown piece type");
+                        break;
+                }
+
             }
             ss.append(System.lineSeparator());
         }
