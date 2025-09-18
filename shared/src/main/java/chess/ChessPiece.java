@@ -165,16 +165,36 @@ public class ChessPiece {
         }
 
         //capture
+        canPromote = false; //re-initialize
+        if (checkingPos.getRow() == 8 && pieceColor == ChessGame.TeamColor.WHITE
+                || checkingPos.getRow() == 1 && pieceColor == ChessGame.TeamColor.BLACK) {
+            canPromote = true;
+        }
+
         ChessPosition checkingCaptureA = new ChessPosition(myPosition.getRow() + dir, myPosition.getColumn() - 1);
         if (!board.isPositionOffBoard(checkingCaptureA)) {
             if (board.getPiece(checkingCaptureA) != null && board.getPiece(checkingCaptureA).pieceColor != pieceColor) {
-                possibleMoves.add(new ChessMove(myPosition, checkingCaptureA, null));
+                if (!canPromote) {
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureA, null));
+                } else {
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureA, PieceType.QUEEN));
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureA, PieceType.ROOK));
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureA, PieceType.BISHOP));
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureA, PieceType.KNIGHT));
+                }
             }
         }
         ChessPosition checkingCaptureB = new ChessPosition(myPosition.getRow() + dir, myPosition.getColumn() + 1);
         if (!board.isPositionOffBoard(checkingCaptureB)) {
             if (board.getPiece(checkingCaptureB) != null && board.getPiece(checkingCaptureB).pieceColor != pieceColor) {
-                possibleMoves.add(new ChessMove(myPosition, checkingCaptureB, null));
+                if (!canPromote) {
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureB, null));
+                } else {
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureB, PieceType.QUEEN));
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureB, PieceType.ROOK));
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureB, PieceType.BISHOP));
+                    possibleMoves.add(new ChessMove(myPosition, checkingCaptureB, PieceType.KNIGHT));
+                }
             }
         }
         return possibleMoves;
