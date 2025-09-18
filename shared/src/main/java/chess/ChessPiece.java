@@ -200,10 +200,6 @@ public class ChessPiece {
         return possibleMoves;
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 
     @Override
     public String toString() {
@@ -211,7 +207,25 @@ public class ChessPiece {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        //if memory address is the same
+        if (this == obj) {
+            return true;
+        }
+        //if it's a different class
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        //check for reals
+        ChessPiece that = (ChessPiece) obj;
+        if (that.type == this.type && that.pieceColor == this.pieceColor) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public int hashCode() {
-        return (pieceColor.hashCode() * 7) + (type.hashCode() * 13);
+        return (pieceColor.ordinal() * 7) + (type.ordinal() * 13);
     }
 }
