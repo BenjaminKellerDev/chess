@@ -57,19 +57,24 @@ public class ChessPiece {
         List<ChessMove> possibleMoves = new ArrayList<>();
         switch (type) {
             case KING:
-                possibleMoves.addAll(getMoves(board, myPosition, new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}}, false));
+                int[][] kingDirections = new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+                possibleMoves.addAll(getMoves(board, myPosition, kingDirections, false));
                 break;
             case QUEEN:
-                possibleMoves.addAll(getMoves(board, myPosition, new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}}, true));
+                int[][] queenDrections = new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+                possibleMoves.addAll(getMoves(board, myPosition, queenDrections, true));
                 break;
             case BISHOP:
-                possibleMoves.addAll(getMoves(board, myPosition, new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}, true));
+                int[][] bishopDrections = new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+                possibleMoves.addAll(getMoves(board, myPosition, bishopDrections, true));
                 break;
             case KNIGHT:
-                possibleMoves.addAll(getMoves(board, myPosition, new int[][]{{2, 1}, {2, -1}, {-2, 1}, {-2, -1}, {1, 2}, {-1, 2}, {1, -2}, {-1, -2}}, false));
+                int[][] knightDrections = new int[][]{{2, 1}, {2, -1}, {-2, 1}, {-2, -1}, {1, 2}, {-1, 2}, {1, -2}, {-1, -2}};
+                possibleMoves.addAll(getMoves(board, myPosition, knightDrections, false));
                 break;
             case ROOK:
-                possibleMoves.addAll(getMoves(board, myPosition, new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}}, true));
+                int[][] rookDrections = new int[][]{{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+                possibleMoves.addAll(getMoves(board, myPosition, rookDrections, true));
                 break;
             case PAWN:
                 possibleMoves.addAll(getMovesPawn(board, myPosition));
