@@ -141,7 +141,7 @@ public class ChessPiece {
         }
 
         //check for validity of potential moves
-        if (board.getPiece(checkingPos) == null || board.getPiece(checkingPos).pieceColor != pieceColor) {
+        if (board.getPiece(checkingPos) == null) {
             if (!canPromote) {
                 possibleMoves.add(new ChessMove(myPosition, checkingPos, null));
             } else {
@@ -155,7 +155,7 @@ public class ChessPiece {
             if ((myPosition.getRow() == 2 && pieceColor == ChessGame.TeamColor.WHITE)
                     || (myPosition.getRow() == 7 && pieceColor == ChessGame.TeamColor.BLACK)) {
                 checkingPos = new ChessPosition(myPosition.getRow() + dir * 2, myPosition.getColumn());
-                if (board.getPiece(checkingPos) == null || board.getPiece(checkingPos).pieceColor != pieceColor) {
+                if (board.getPiece(checkingPos) == null) {
                     possibleMoves.add(new ChessMove(myPosition, checkingPos, null));
                 }
 
