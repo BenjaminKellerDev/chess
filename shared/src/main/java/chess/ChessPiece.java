@@ -127,6 +127,8 @@ public class ChessPiece {
         } else {
             dir = -1;
         }
+
+        //move forward
         ChessPosition checkingPos = new ChessPosition(myPosition.getRow() + dir, myPosition.getColumn());
         //this may be invalid position,
         if (board.isPositionOffBoard(checkingPos)) {
@@ -159,6 +161,20 @@ public class ChessPiece {
                     possibleMoves.add(new ChessMove(myPosition, checkingPos, null));
                 }
 
+            }
+        }
+
+        //capture
+        ChessPosition checkingCaptureA = new ChessPosition(myPosition.getRow() + dir, myPosition.getColumn() - 1);
+        if (!board.isPositionOffBoard(checkingCaptureA)) {
+            if (board.getPiece(checkingCaptureA) != null && board.getPiece(checkingCaptureA).pieceColor != pieceColor) {
+                possibleMoves.add(new ChessMove(myPosition, checkingCaptureA, null));
+            }
+        }
+        ChessPosition checkingCaptureB = new ChessPosition(myPosition.getRow() + dir, myPosition.getColumn() + 1);
+        if (!board.isPositionOffBoard(checkingCaptureB)) {
+            if (board.getPiece(checkingCaptureB) != null && board.getPiece(checkingCaptureB).pieceColor != pieceColor) {
+                possibleMoves.add(new ChessMove(myPosition, checkingCaptureB, null));
             }
         }
         return possibleMoves;
