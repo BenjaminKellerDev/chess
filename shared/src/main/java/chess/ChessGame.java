@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -12,11 +14,13 @@ public class ChessGame
 {
 
     private ChessBoard myBoard = new ChessBoard();
+    private List<ChessBoard> chessBoardHistory = new ArrayList<>();
     private TeamColor turn = TeamColor.WHITE;
 
     public ChessGame()
     {
         myBoard.resetBoard();
+        chessBoardHistory.add(myBoard);
     }
 
     /**
@@ -55,7 +59,7 @@ public class ChessGame
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition)
     {
-        myBoard.getPiece(startPosition).getMoves()
+        return myBoard.getPiece(startPosition).pieceMoves(myBoard, startPosition);
     }
 
     /**
@@ -110,7 +114,8 @@ public class ChessGame
      */
     public void setBoard(ChessBoard board)
     {
-        throw new RuntimeException("Not implemented");
+        myBoard = board;
+        chessBoardHistory.add(myBoard);
     }
 
     /**
@@ -120,6 +125,39 @@ public class ChessGame
      */
     public ChessBoard getBoard()
     {
-        throw new RuntimeException("Not implemented");
+        return myBoard;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return turn.ordinal() * 3 + myBoard.hashCode() * 13;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass())
+        {
+            return false;
+        }
+        ChessGame that = (ChessGame) obj;
+        if (that.myBoard.equals(this.myBoard)
+                && that.turn == this.turn)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("Turn: %s %n %s", turn.toString(), myBoard.toString());
     }
 }
