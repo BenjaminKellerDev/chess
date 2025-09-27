@@ -76,19 +76,37 @@ public class ChessGame
      */
     public void makeMove(ChessMove move) throws InvalidMoveException
     {
+        // start position esists
         if (myBoard.getPiece(move.getStartPosition()) == null)
         {
             throw new InvalidMoveException("Invalid move: " + move.toString());
         }
+        //it's your turn
+        TeamColor moveColor = myBoard.getPiece(move.getStartPosition()).getTeamColor();
+        if (moveColor != turn)
+        {
+            throw new InvalidMoveException(String.format("Invalid move turn: %s, move piece %s", turn.toString(), moveColor));
+        }
+        //move is valid
         Collection<ChessPosition> validMoves = extractEndPosFromChessMove(validMoves(move.getStartPosition()));
         if (!validMoves.contains(move.getEndPosition()))
         {
             throw new InvalidMoveException(String.format("Invalid move: %s%n ValidMoves: %s", move.toString(), validMoves(move.getStartPosition()).toString()));
         }
-        ChessBoard testBoard =
-        if(isInCheck(turn,m))
-
+        // does it resolve check
+        if (isInCheck(turn))
+        {
+            ChessBoard testBoard = new ChessBoard(myBoard);
+            testBoard.movePiece(move);
+            if (isInCheck(turn, testBoard))
+            {
+                throw new InvalidMoveException(String.format("Invalid move: %s does not remove king from danger", move.toString()));
+            }
+        }
+        //move piece
         myBoard.movePiece(move);
+        //swap turns
+        turn = (turn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
     private Collection<ChessPosition> extractEndPosFromChessMove(Collection<ChessMove> chessMoves)

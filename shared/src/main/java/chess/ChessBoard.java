@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -18,7 +19,14 @@ public class ChessBoard
     {
 
     }
-    
+
+    public ChessBoard(ChessBoard oldBoard)
+    {
+
+        System.arraycopy(oldBoard.board, 0, board, 0, board.length);
+
+    }
+
 
     /**
      * Adds a chess piece to the chessboard
