@@ -6,20 +6,23 @@ package chess;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessMove {
+public class ChessMove
+{
 
     private ChessPosition startPosition;
     private ChessPosition endPosition;
     private ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
-                     ChessPiece.PieceType promotionPiece) {
+                     ChessPiece.PieceType promotionPiece)
+    {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionPiece = promotionPiece;
     }
 
-    public ChessMove(ChessPosition startPosition, ChessPosition endPosition) {
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition)
+    {
         this(startPosition, endPosition, null);
     }
 
@@ -27,14 +30,16 @@ public class ChessMove {
     /**
      * @return ChessPosition of starting location
      */
-    public ChessPosition getStartPosition() {
+    public ChessPosition getStartPosition()
+    {
         return startPosition;
     }
 
     /**
      * @return ChessPosition of ending location
      */
-    public ChessPosition getEndPosition() {
+    public ChessPosition getEndPosition()
+    {
         return endPosition;
     }
 
@@ -44,37 +49,47 @@ public class ChessMove {
      *
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
-    public ChessPiece.PieceType getPromotionPiece() {
+    public ChessPiece.PieceType getPromotionPiece()
+    {
         return promotionPiece;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return String.format("ChessMove{%s,%s,%s}", startPosition, endPosition, promotionPiece);
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         //todo add promotion peice hash
-        if (promotionPiece == null) {
+        if (promotionPiece == null)
+        {
             return (13 * startPosition.hashCode()) + (27 * endPosition.hashCode());
-        } else {
+        }
+        else
+        {
             return (13 * startPosition.hashCode()) + (27 * endPosition.hashCode() + (7 * promotionPiece.ordinal()));
         }
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
+        {
             return false;
         }
         ChessMove that = (ChessMove) obj;
         if (that.startPosition.equals(this.startPosition)
                 && that.endPosition.equals(this.endPosition)
-                && that.promotionPiece == this.promotionPiece) {
+                && that.promotionPiece == this.promotionPiece)
+        {
             return true;
         }
 

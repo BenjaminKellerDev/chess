@@ -6,12 +6,14 @@ package chess;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessPosition {
+public class ChessPosition
+{
 
     private final int row;
     private final int col;
 
-    public ChessPosition(int row, int col) {
+    public ChessPosition(int row, int col)
+    {
         this.row = row;
         this.col = col;
     }
@@ -21,7 +23,8 @@ public class ChessPosition {
      * @return which row this position is in
      * 1 codes for the bottom row
      */
-    public int getRow() {
+    public int getRow()
+    {
         return row;
     }
 
@@ -29,31 +32,38 @@ public class ChessPosition {
      * @return which column this position is in
      * 1 codes for the left row
      */
-    public int getColumn() {
+    public int getColumn()
+    {
         return col;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return String.format("(r%d,c%d)", row, col);
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
 
         return (71 * row) + (67 * col);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass())
+        {
             return false;
         }
         ChessPosition that = (ChessPosition) obj;
-        if (that.row == this.row && that.col == this.col) {
+        if (that.row == this.row && that.col == this.col)
+        {
             return true;
         }
         return false;
