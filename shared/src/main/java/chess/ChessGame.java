@@ -60,6 +60,10 @@ public class ChessGame
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition)
     {
+        if (myBoard.getPiece(startPosition) == null)
+        {
+            return null; //invalid start Position
+        }
         Collection<ChessMove> moves = myBoard.getPiece(startPosition).pieceMoves(myBoard, startPosition);
         return moves;
     }
@@ -72,12 +76,29 @@ public class ChessGame
      */
     public void makeMove(ChessMove move) throws InvalidMoveException
     {
-        //bad redo
-        if (!validMoves(move.getStartPosition()).contains(move.getEndPosition()))
+        if (myBoard.getPiece(move.getStartPosition()) == null)
         {
             throw new InvalidMoveException("Invalid move: " + move.toString());
         }
+        Collection<ChessPosition> validMoves = extractEndPosFromChessMove(validMoves(move.getStartPosition()));
+        if (!validMoves.contains(move.getEndPosition()))
+        {
+            throw new InvalidMoveException(String.format("Invalid move: %s%n ValidMoves: %s", move.toString(), validMoves(move.getStartPosition()).toString()));
+        }
+        ChessBoard testBoard =
+        if(isInCheck(turn,m))
+
         myBoard.movePiece(move);
+    }
+
+    private Collection<ChessPosition> extractEndPosFromChessMove(Collection<ChessMove> chessMoves)
+    {
+        Collection<ChessPosition> chessPositions = new HashSet<>();
+        for (var move : chessMoves)
+        {
+            chessPositions.add(move.getEndPosition());
+        }
+        return chessPositions;
     }
 
     /**
@@ -86,19 +107,19 @@ public class ChessGame
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor)
+    public boolean isInCheck(TeamColor teamColor, ChessBoard board)
     {
         TeamColor oppsiteTeam = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
 
         Collection<ChessPosition> possibleMoves = new HashSet<>();
-        for (var piece : myBoard.getAllPositionsOfTeam(oppsiteTeam))
+        for (var piece : board.getAllPositionsOfTeam(oppsiteTeam))
         {
             for (var move : validMoves(piece))
             {
                 possibleMoves.add(move.getEndPosition());
             }
         }
-        ChessPosition kingPos = myBoard.getKingPos(teamColor);
+        ChessPosition kingPos = board.getKingPos(teamColor);
         for (var pos : possibleMoves)
         {
             if (pos.equals(kingPos))
@@ -107,6 +128,11 @@ public class ChessGame
             }
         }
         return false;
+    }
+
+    public boolean isInCheck(TeamColor teamColor)
+    {
+        return isInCheck(teamColor, myBoard);
     }
 
     /**

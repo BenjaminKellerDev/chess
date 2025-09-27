@@ -18,6 +18,7 @@ public class ChessBoard
     {
 
     }
+    
 
     /**
      * Adds a chess piece to the chessboard
@@ -104,6 +105,8 @@ public class ChessBoard
             }
 
         }
+        throw new RuntimeException("Cannot find King of color " + teamColor.toString() + " invalid game");
+        //return new ChessPosition(-1, -1);// no king, error
     }
 
     public boolean isPositionOffBoard(ChessPosition position)
