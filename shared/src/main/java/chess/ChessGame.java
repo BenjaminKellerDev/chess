@@ -8,17 +8,23 @@ import java.util.Collection;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessGame {
+public class ChessGame
+{
 
-    public ChessGame() {
+    private ChessBoard myBoard = new ChessBoard();
+    private TeamColor turn = TeamColor.WHITE;
 
+    public ChessGame()
+    {
+        myBoard.resetBoard();
     }
 
     /**
      * @return Which team's turn it is
      */
-    public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+    public TeamColor getTeamTurn()
+    {
+        return turn;
     }
 
     /**
@@ -26,14 +32,16 @@ public class ChessGame {
      *
      * @param team the team whose turn it is
      */
-    public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+    public void setTeamTurn(TeamColor team)
+    {
+        turn = team;
     }
 
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
-    public enum TeamColor {
+    public enum TeamColor
+    {
         WHITE,
         BLACK
     }
@@ -45,8 +53,9 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+    public Collection<ChessMove> validMoves(ChessPosition startPosition)
+    {
+        myBoard.getPiece(startPosition).getMoves()
     }
 
     /**
@@ -55,7 +64,8 @@ public class ChessGame {
      * @param move chess move to perform
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) throws InvalidMoveException {
+    public void makeMove(ChessMove move) throws InvalidMoveException
+    {
         throw new RuntimeException("Not implemented");
     }
 
@@ -65,7 +75,8 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor) {
+    public boolean isInCheck(TeamColor teamColor)
+    {
         throw new RuntimeException("Not implemented");
     }
 
@@ -75,7 +86,8 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
-    public boolean isInCheckmate(TeamColor teamColor) {
+    public boolean isInCheckmate(TeamColor teamColor)
+    {
         throw new RuntimeException("Not implemented");
     }
 
@@ -86,7 +98,8 @@ public class ChessGame {
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
      */
-    public boolean isInStalemate(TeamColor teamColor) {
+    public boolean isInStalemate(TeamColor teamColor)
+    {
         throw new RuntimeException("Not implemented");
     }
 
@@ -95,7 +108,8 @@ public class ChessGame {
      *
      * @param board the new board to use
      */
-    public void setBoard(ChessBoard board) {
+    public void setBoard(ChessBoard board)
+    {
         throw new RuntimeException("Not implemented");
     }
 
@@ -104,7 +118,8 @@ public class ChessGame {
      *
      * @return the chessboard
      */
-    public ChessBoard getBoard() {
+    public ChessBoard getBoard()
+    {
         throw new RuntimeException("Not implemented");
     }
 }

@@ -92,7 +92,7 @@ public class ChessPiece
         return possibleMoves;
     }
 
-    List<ChessMove> getMoves(ChessBoard board, ChessPosition myPosition, int[][] directions, boolean repeat)
+    private List<ChessMove> getMoves(ChessBoard board, ChessPosition myPosition, int[][] directions, boolean repeat)
     {
         HashSet<ChessPosition> possiblePositions = new HashSet<>();
         for (var pos : directions)
@@ -138,7 +138,7 @@ public class ChessPiece
         return new ArrayList<>(possibleMoves);
     }
 
-    List<ChessMove> getMovesPawn(ChessBoard board, ChessPosition myPosition)
+    private List<ChessMove> getMovesPawn(ChessBoard board, ChessPosition myPosition)
     {
         List<ChessMove> possibleMoves = new ArrayList<>();
         int dir = 0;
