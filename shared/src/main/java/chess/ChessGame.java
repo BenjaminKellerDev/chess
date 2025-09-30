@@ -192,7 +192,26 @@ public class ChessGame
         {
             return false;
         }
-        throw new RuntimeException("Not implemented");
+        for (var piece : myBoard.getAllPositionsOfTeam(teamColor))
+        {
+            for (var move : validMoves(piece))
+            {
+                ChessBoard testBoard = new ChessBoard(myBoard);
+                try
+                {
+                    testBoard.movePiece(move);
+                    //are you still in check?
+                    if (!isInCheck(teamColor, testBoard))//is 'turn' right here?
+                    {
+                        return false;
+                    }
+                } catch (InvalidMoveException e)
+                {
+                    //do nothing
+                }
+            }
+        }
+        return true;
     }
 
     /**
