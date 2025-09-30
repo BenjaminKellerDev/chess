@@ -67,28 +67,29 @@ public class ChessGame
         //potential moves
         Collection<ChessMove> moves = myBoard.getPiece(startPosition).pieceMoves(myBoard, startPosition);
         Collection<ChessMove> movesToRemove = new HashSet<>();
+        TeamColor pieceTurn = myBoard.getPiece(startPosition).getTeamColor();
         //check to make sure check is resolved
-        if (isInCheck(turn))
+        //boolean wasInCheckBeforeMove = isInCheck(pieceTurn);
+
+        for (var move : moves)
         {
-            for (var move : moves)
+            ChessBoard testBoard = new ChessBoard(myBoard);
+            try
             {
-                ChessBoard testBoard = new ChessBoard(myBoard);
-                try
-                {
-                    testBoard.movePiece(move);
-                    //are you still in check?
-                    if (isInCheck(turn, testBoard))//is 'turn' right here?
-                    {
-                        movesToRemove.add(move);
-                    }
-                } catch (InvalidMoveException e)
+                testBoard.movePiece(move);
+                //are you still in check?
+                if (isInCheck(pieceTurn, testBoard))//is 'turn' right here?
                 {
                     movesToRemove.add(move);
-
                 }
+            } catch (InvalidMoveException e)
+            {
+                movesToRemove.add(move);
 
             }
+
         }
+
         moves.removeAll(movesToRemove);
         return moves;
     }
