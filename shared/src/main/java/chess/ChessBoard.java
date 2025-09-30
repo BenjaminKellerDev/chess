@@ -23,7 +23,10 @@ public class ChessBoard
     public ChessBoard(ChessBoard oldBoard)
     {
 
-        System.arraycopy(oldBoard.board, 0, board, 0, board.length);
+        for (int i = 0; i < board.length; i++)
+        {
+            board[i] = Arrays.copyOf(oldBoard.board[i], oldBoard.board.length);
+        }
 
     }
 

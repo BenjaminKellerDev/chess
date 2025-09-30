@@ -64,7 +64,32 @@ public class ChessGame
         {
             return null; //invalid start Position
         }
+        //potential moves
         Collection<ChessMove> moves = myBoard.getPiece(startPosition).pieceMoves(myBoard, startPosition);
+        Collection<ChessMove> movesToRemove = new HashSet<>();
+        //check to make sure check is resolved
+        if (isInCheck(turn))
+        {
+            for (var move : moves)
+            {
+                ChessBoard testBoard = new ChessBoard(myBoard);
+                try
+                {
+                    testBoard.movePiece(move);
+                    //are you still in check?
+                    if (isInCheck(turn, testBoard))//is 'turn' right here?
+                    {
+                        movesToRemove.add(move);
+                    }
+                } catch (InvalidMoveException e)
+                {
+                    movesToRemove.add(move);
+
+                }
+
+            }
+        }
+        moves.removeAll(movesToRemove);
         return moves;
     }
 
@@ -132,7 +157,8 @@ public class ChessGame
         Collection<ChessPosition> possibleMoves = new HashSet<>();
         for (var piece : board.getAllPositionsOfTeam(oppsiteTeam))
         {
-            for (var move : validMoves(piece))
+            Collection<ChessMove> rawMoves = board.getPiece(piece).pieceMoves(board, piece);
+            for (var move : rawMoves)
             {
                 possibleMoves.add(move.getEndPosition());
             }
