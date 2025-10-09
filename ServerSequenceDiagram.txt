@@ -1,0 +1,172 @@
+actor Client
+participant Server
+participant Handler
+participant Service
+participant DataAccess
+database db
+
+entryspacing 0.9
+group#43829c #lightblue Registration
+Client -> Server: [POST] /user\n{"username":" ", "password":" ", "email":" "}
+Server -> Handler: {"username":" ", "password":" ", "email":" "}
+Handler -> Service: register(RegisterRequest)
+Service -> DataAccess: getUser(username)
+DataAccess -> db:Find UserData by username
+break User with username already exists
+DataAccess --> Service: UserData
+Service --> Server: AlreadyTakenException
+Server --> Client: 403\n{"message": "Error: username already taken"}
+end
+DataAccess --> Service: null
+Service -> DataAccess:createUser(userData)
+DataAccess -> db:Add UserData
+Service -> DataAccess:createAuth(authData)
+DataAccess -> db:Add AuthData
+Service --> Handler: RegisterResult
+Handler --> Server: {"username" : " ", "authToken" : " "}
+Server --> Client: 200\n{"username" : " ", "authToken" : " "}
+end
+
+group#orange #FCEDCA Login
+Client -> Server: [POST] /session\n{username, password}
+Server -> Handler: { "username":" ", "password":" " }
+Handler -> Service: login(loginCredentials)
+Service -> DataAccess: getUser(username)
+DataAccess -> db:Find UserData by username
+break Username not found
+DataAccess --> Service: null
+Service --> Server: UsernameNotFoundException
+Server --> Client: [400] { "message": "Error: bad request" }
+end
+DataAccess --> Service: UserData
+Service -> DataAccess: checkPassword(username,password)
+DataAccess -> db:Find password by username
+DataAccess --> Service: Password
+break Password Incorrect
+Service --> Server: IncorrectPasswordException
+Server --> Client: [401] { "message": "Error: unauthorized" }
+end
+Service -> DataAccess:createAuth(authData)
+DataAccess -> db:Add AuthData
+Service --> Handler: LoginResult
+Handler --> Server: {"username" : " ", "authToken" : " "}
+Server --> Client: 200\n{"username" : " ", "authToken" : " "}
+end
+
+group#green #lightgreen Logout
+Client -> Server: [DELETE] /session\nauthToken
+Server -> Handler: authToken
+Handler -> Service: logout(authToken)
+Service -> DataAccess: getAuthtoken(authToken)
+DataAccess -> db: Get AuthToken
+break Unauthorized
+DataAccess --> Service: null
+Service --> Server: NotAuthorizedException
+Server --> Client: [400] { "message": "Error: bad request" }
+end
+DataAccess --> Service: UserData
+Service -> DataAccess: clearAuthtoken(authToken)
+DataAccess -> db: Drop AuthToken
+Service --> Handler: Logout Success (returns without error)
+Handler --> Server: {}
+Server --> Client: 200\n{}
+end
+
+group#red #pink List Games
+Client -> Server: [GET] /game\nauthToken
+Server -> Handler: authToken
+Handler -> Service: listGames(authToken)
+Service -> DataAccess:getAuthtoken(authToken)
+DataAccess -> db: Get AuthToken
+break Unauthorized
+DataAccess --> Service: null
+Service --> Server: AuthTokenNotFoundException
+Server --> Client: [401] { "message": "Error: unauthorized" }
+end
+DataAccess --> Service: UserData
+Service ->DataAccess: getGameList()
+DataAccess -> db:Get list of all games
+
+DataAccess --> Service: listOfGames
+Service->Handler:returnListOfGames
+Handler -> Server: { "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
+Server -> Client: 200\n{ "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
+end
+
+group#d790e0 #E3CCE6 Create Game 
+Client -> Server: [POST] /game\nauthToken\n{gameName}
+Server -> Handler: authToken\n{gameName}
+Handler -> Service: createGame(authToken,gameName)
+Service -> DataAccess:getAuthtoken(authToken)
+DataAccess -> db: Get AuthToken
+break Unauthorized
+DataAccess --> Service: null
+Service --> Server: AuthTokenNotFoundException
+Server --> Client: [401] { "message": "Error: unauthorized" }
+end
+DataAccess --> Service: UserData
+Service -> DataAccess: checkForGame(gameName)
+DataAccess -> db: Find game by name
+break Bad request
+DataAccess --> Service: GameData
+Service --> Server: BadRequestException
+Server --> Client: [400] { "message": "Error: bad request" }
+end
+DataAccess --> Service: null
+Service -> DataAccess: CreateGame(gameName)
+DataAccess -> db: Add Game
+Service --> Handler:result (gameID)
+Handler --> Server: { "gameID": 1234 }
+Client <-- Server:200\n{ "gameID": 1234 }
+
+end
+
+group#yellow #lightyellow Join Game #black
+Client -> Server: [PUT] /game\nauthToken\n{playerColor, gameID}
+Server -> Handler: authToken\n{playerColor,gameID}
+Handler -> Service: joinGame(authToken,playerColor,gameID)
+Service -> DataAccess:getAuthtoken(authToken)
+DataAccess -> db: Get AuthToken
+break Unauthorized
+DataAccess --> Service: null
+Service --> Server: AuthTokenNotFoundException
+Server --> Client: [401] { "message": "Error: unauthorized" }
+end
+DataAccess --> Service: UserData
+Service -> DataAccess: checkForGame(gameName)
+DataAccess -> db: Find game by name
+break Bad request
+DataAccess --> Service: null
+Service --> Server: BadRequestException
+Server --> Client: [400] { "message": "Error: bad request" }
+end
+DataAccess --> Service: gameData
+Service -> DataAccess:checkIfColorIsAvaible(playerColor,gameID)
+DataAccess -> db:Find user by gameID and color
+break Game Slot Already Taken
+DataAccess --> Service: userData
+Service --> Server: GameSlotAlreadyTakenException
+Server --> Client: [403] { "message": "Error: already taken" }
+end
+DataAccess --> Service: null
+Service -> DataAccess: addUserToGame(playerColor,gameID)
+DataAccess -> db: Write data to game (Add player to game)
+Service --> Handler: return success
+Handler --> Server: {}
+Client <-- Server:200\n{}
+end
+
+group#gray #lightgray Clear application 
+Client -> Server: [DELETE] /db
+Server -> Handler: {}
+Handler -> Service: clearDatabase()
+Service -> DataAccess: clearAllAuthTokens()
+DataAccess -> db: Drop All AuthTokens
+Service -> DataAccess: clearAllUsers()
+DataAccess -> db: Drop All Users
+Service -> DataAccess: clearAllGames()
+DataAccess -> db: Drop All Games
+Service --> Handler: Finished
+Handler --> Server: {}
+Server --> Client: 200\n{}
+end
