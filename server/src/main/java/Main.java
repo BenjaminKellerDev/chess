@@ -13,24 +13,7 @@ public class Main
     {
         final Server server;
 
-        final UserService userService;
-        final AdminService adminService;
-        final GameService gameService;
-
-        final AuthDAO authDAO;
-        final GameDAO gameDAO;
-        final UserDAO userDAO;
-
-        authDAO = new RAMAuthDAO();
-        gameDAO = new RAMGameDAO();
-        userDAO = new RAMUserDAO();
-
-        userService = new UserService(userDAO);
-        adminService = new AdminService(authDAO, gameDAO, userDAO);
-        gameService = new GameService(gameDAO);
-
-
-        server = new Server(userService, adminService, gameService);
+        server = new Server();
 
         server.run(8080);
 
