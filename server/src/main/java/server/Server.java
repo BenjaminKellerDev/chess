@@ -1,8 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessInterface;
-import dataaccess.MemoryDataAcess;
+import dataaccess.UserDAO;
+import dataaccess.RAMUserDAO;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.UserService;
@@ -12,13 +12,13 @@ public class Server
 
     private final Javalin server;
     private UserService userService;
-    private DataAccessInterface dataAccess;
+    private UserDAO dataAccess;
 
     public Server()
     {
 
         userService = new UserService();
-        dataAccess = new MemoryDataAcess();
+        dataAccess = new RAMUserDAO();
 
         server = Javalin.create(config -> config.staticFiles.add("web"));
 

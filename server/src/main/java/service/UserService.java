@@ -1,11 +1,20 @@
 package service;
 
-import datamodel.RegistrationResult;
+import datamodel.*;
+import model.*;
 
 public class UserService
 {
-    public RegistrationResult register(User user)
+    public RegisterResult register(UserData registerRequest)
     {
-        return new RegistrationResult("notImplemtned", "na");
+        return new RegisterResult("notImplemtned", "na");
+    }
+
+    public AuthData login(LoginRequest loginRequest)
+    {
+    }
+
+    public void logout(LogoutRequest logoutRequest)
+    {
     }
 }
