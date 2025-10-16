@@ -1,5 +1,5 @@
 package model;
 
-public record AuthData(String authData, String username)
+public record AuthData(String authToken, String username)
 {
 }

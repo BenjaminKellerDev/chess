@@ -1,6 +1,6 @@
 package service;
 
-import data
+import datamodel.*;
 
 public class GameService
 {
