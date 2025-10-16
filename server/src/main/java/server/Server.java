@@ -1,37 +1,48 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import dataaccess.RAMUserDAO;
 import io.javalin.*;
 import io.javalin.http.Context;
+import service.AdminService;
+import service.GameService;
 import service.UserService;
 
 public class Server
 {
 
     private final Javalin server;
-    private UserService userService;
-    private UserDAO dataAccess;
 
-    public Server()
+    private final UserService userService;
+    private final AdminService adminService;
+    private final GameService gameService;
+
+    public Server(UserService userService, AdminService adminService, GameService gameService)
     {
-
-        userService = new UserService();
-        dataAccess = new RAMUserDAO();
+        this.userService = userService;
+        this.adminService = adminService;
+        this.gameService = gameService;
 
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
         server.delete("db", this::dropDatabase);
         server.post("user", this::register);
         // Register your endpoints and exception handlers here.
-
     }
 
     private void dropDatabase(Context ctx)
     {
-        dataAccess.dropDatabase();
-        ctx.result("{}");
+        try
+        {
+            adminService.dropDatbase();
+            ctx.result("{}");
+        } catch (DataAccessException e)
+        {
+            ctx.result(e.toString());
+        }
     }
 
     private void register(Context ctx)
