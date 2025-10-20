@@ -63,8 +63,8 @@ public class UserServiceTests
         assertNotNull(userDAO.getUser(newUser.username()));
         assertNotNull(userDAO.getUser(differentUser.username()));
 
-        assertNotNull(authDAO.getAuthByUsername(newUser.username()));
-        assertNotNull(authDAO.getAuthByUsername(differentUser.username()));
+        assertFalse(authDAO.getAuthByUsername(newUser.username()).isEmpty());
+        assertFalse(authDAO.getAuthByUsername(differentUser.username()).isEmpty());
     }
 
     @Test
@@ -91,25 +91,41 @@ public class UserServiceTests
         assertThrows(DataAccessException.class, () -> userService.register(sameEmailUser));
 
         assertNotNull(userDAO.getUser(newUser.username()));
-        assertNotNull(authDAO.getAuthByUsername(newUser.username()));
+        assertFalse(authDAO.getAuthByUsername(newUser.username()).isEmpty());
 
         assertNull(userDAO.getUser(sameUsername.username()));
-        assertNull(authDAO.getAuthByUsername(sameUsername.username()));
+        assertFalse(authDAO.getAuthByUsername(sameUsername.username()).isEmpty());
 
         assertNull(userDAO.getUser(sameEmailUser.username()));
-        assertNull(authDAO.getAuthByUsername(sameEmailUser.username()));
+        assertFalse(authDAO.getAuthByUsername(sameEmailUser.username()).isEmpty());
     }
 
     @Test
     public void loginGood()
     {
+        UserData newUser = new UserData("NewUser", "newUserPassword", "nu@mail.com");
+        assertDoesNotThrow(() -> userService.register(newUser));
+        LoginRequest loginRequest = new LoginRequest(newUser.username(), newUser.password());
+        assertDoesNotThrow(() -> userService.login(loginRequest));
 
+        assertFalse(authDAO.getAuthByUsername(newUser.username()).isEmpty());
     }
 
     @Test
     public void loginEvil()
     {
+        UserData newUser = new UserData("NewUser", "newUserPassword", "nu@mail.com");
+        assertDoesNotThrow(() -> userService.register(newUser));
+        LoginRequest loginRequestBadPassword = new LoginRequest(newUser.username(), "NotThePassword");
+        LoginRequest loginRequestBadUsername = new LoginRequest("NotTheUsername", newUser.password());
+        LoginRequest loginRequestBadCreds = new LoginRequest("Uncle Bob", "ReadMyBook");
 
+        assertThrows(DataAccessException.class, () -> userService.login(loginRequestBadPassword));
+        assertThrows(DataAccessException.class, () -> userService.login(loginRequestBadUsername));
+        assertThrows(DataAccessException.class, () -> userService.login(loginRequestBadCreds));
+
+        //only 1 auth due to loginRequest
+        assertTrue(authDAO.getAuthByUsername(newUser.username()).size() == 1);
     }
 
     @Test
