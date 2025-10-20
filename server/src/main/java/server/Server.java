@@ -14,7 +14,7 @@ import service.UserService;
 public class Server
 {
 
-    private final Javalin server;
+    private final Javalin javalin;
 
     private final UserService userService;
     private final AdminService adminService;
@@ -37,11 +37,11 @@ public class Server
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         gameService = new GameService(gameDAO);
 
-        server = Javalin.create(config -> config.staticFiles.add("web"));
+        javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        server.delete("db", this::dropDatabase);
-        server.post("user", this::register);
-        server.post("session", this::login);
+        javalin.delete("db", this::dropDatabase);
+        javalin.post("user", this::register);
+        javalin.post("session", this::login);
         // Register your endpoints and exception handlers here.
     }
 
@@ -87,12 +87,12 @@ public class Server
 
     public int run(int desiredPort)
     {
-        server.start(desiredPort);
-        return server.port();
+        javalin.start(desiredPort);
+        return javalin.port();
     }
 
     public void stop()
     {
-        server.stop();
+        javalin.stop();
     }
 }
