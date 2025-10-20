@@ -131,12 +131,35 @@ public class UserServiceTests
     @Test
     public void logoutGood()
     {
+        //register
+        UserData newUser = new UserData("NewUser", "newUserPassword", "nu@mail.com");
+        AuthData registerAuthData;
+        registerAuthData = assertDoesNotThrow(() -> userService.register(newUser));
+        LogoutRequest logoutRequest = new LogoutRequest(registerAuthData.authToken());
 
+        //logout from register
+        assertDoesNotThrow(() -> userService.logout(logoutRequest));
+        assertTrue(authDAO.getAuthByUsername(newUser.username()).isEmpty());
+
+        //login back in
+        LoginRequest loginRequest = new LoginRequest(newUser.username(), newUser.password());
+        AuthData loginAuthData = assertDoesNotThrow(() -> userService.login(loginRequest));
+        LogoutRequest logoutRequest2 = new LogoutRequest(loginAuthData.authToken());
+
+        //log back out
+        assertDoesNotThrow(() -> userService.logout(logoutRequest2));
+        assertTrue(authDAO.getAuthByUsername(newUser.username()).isEmpty());
     }
 
     @Test
     public void logoutEvil()
     {
+        UserData newUser = new UserData("NewUser", "newUserPassword", "nu@mail.com");
+        AuthData registerAuthData;
+        registerAuthData = assertDoesNotThrow(() -> userService.register(newUser));
+        LogoutRequest invalidLogoutRequest = new LogoutRequest("incorrectAuthToken");
 
+        assertThrows(DataAccessException.class, () -> userService.logout(invalidLogoutRequest));
+        assertFalse(authDAO.getAuthByUsername(newUser.username()).isEmpty());
     }
 }
