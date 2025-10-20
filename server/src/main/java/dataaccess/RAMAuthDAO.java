@@ -35,6 +35,12 @@ public class RAMAuthDAO implements AuthDAO
     }
 
     @Override
+    public List<AuthData> getAuthByUsername(String username)
+    {
+        return List.of();
+    }
+
+    @Override
     public void deleteAuth(AuthData authData)
     {
         authorizations.remove(authData);
