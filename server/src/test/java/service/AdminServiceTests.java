@@ -47,9 +47,9 @@ public class AdminServiceTests
     public void clearDatabaseTest()
     {
         UserData newUser = new UserData("NewUser", "newUserPassword", "nu@mail.com");
-        UserData differentUser = new UserData("diffrentUser", "diffrentUserPassword", "dif@mail.com");
+        UserData differentUser = new UserData("differentUser", "differentUserPassword", "dif@mail.com");
         AuthData newAuthData = new AuthData("testAuthTokenkejfgbkejr43", "NewUser");
-        GameData newGameData = new GameData(1, "NewUser", "diffrentUser", "coolGame", new ChessGame());
+        GameData newGameData = new GameData(1, "NewUser", "differentUser", "coolGame", new ChessGame());
 
         userDAO.createUser(newUser);
         authDAO.createAuth(newAuthData);

@@ -55,7 +55,7 @@ public class UserServiceTests
     public void registerGood()
     {
         UserData newUser = new UserData("NewUser", "newUserPassword", "nu@mail.com");
-        UserData differentUser = new UserData("diffrentUser", "diffrentUserPassword", "dif@mail.com");
+        UserData differentUser = new UserData("differentUser", "differentUserPassword", "dif@mail.com");
 
         assertDoesNotThrow(() -> userService.register(newUser));
         assertDoesNotThrow(() -> userService.register(differentUser));
@@ -83,8 +83,8 @@ public class UserServiceTests
     public void duplicateData()
     {
         UserData newUser = new UserData("NewUser", "newUserPassword", "nu@mail.com");
-        UserData sameUsername = new UserData("NewUser", "diffrentUserPassword", "dif@mail.com");
-        UserData sameEmailUser = new UserData("diffUser", "moreDiffrentUserPassword", "nu@mail.com");
+        UserData sameUsername = new UserData("NewUser", "differentUserPassword", "dif@mail.com");
+        UserData sameEmailUser = new UserData("diffUser", "moreDifferentUserPassword", "nu@mail.com");
 
         assertDoesNotThrow(() -> userService.register(newUser));
         assertThrows(DataAccessException.class, () -> userService.register(sameUsername));

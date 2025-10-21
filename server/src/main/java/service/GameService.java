@@ -1,7 +1,11 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import datamodel.*;
+import model.GameData;
+
+import java.util.List;
 
 public class GameService
 {
@@ -14,6 +18,17 @@ public class GameService
     }
 
     public void joinGame(JoinGameRequest joinGameRequest)
+    {
+
+    }
+
+    public List<GameData> listGames(String authToken) throws DataAccessException
+    {
+
+    }
+
+    //game id, perhaps replace with gameData
+    public int CreateGame(String authToken, String gameName)
     {
 
     }
