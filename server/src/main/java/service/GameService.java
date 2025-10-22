@@ -70,7 +70,7 @@ public class GameService
     }
 
     //game id, perhaps replace with gameData
-    public int CreateGame(String authToken, String gameName) throws DataAccessException
+    public int createGame(String authToken, String gameName) throws DataAccessException
     {
         if (authToken == null || gameName == null)
         {

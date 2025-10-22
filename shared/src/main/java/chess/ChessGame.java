@@ -117,7 +117,8 @@ public class ChessGame
         Collection<ChessPosition> validMoves = extractEndPosFromChessMove(validMoves(move.getStartPosition()));
         if (!validMoves.contains(move.getEndPosition()))
         {
-            throw new InvalidMoveException(String.format("Invalid move: %s%n ValidMoves: %s", move.toString(), validMoves(move.getStartPosition()).toString()));
+            String validMovesPrintOut = validMoves(move.getStartPosition()).toString();
+            throw new InvalidMoveException(String.format("Invalid move: %s%n ValidMoves: %s", move.toString(), validMovesPrintOut));
         }
         // does it resolve check
         if (isInCheck(turn))

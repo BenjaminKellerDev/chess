@@ -8,41 +8,9 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AdminServiceTests
+public class AdminServiceTests extends BaseServiceTests
 {
-    private static AdminService adminService;
-    //if there's time, refactor to use services to better simulate the overall backend
-    private static UserService userService;
-    private static GameService gameService;
-
-    private static AuthDAO authDAO;
-    private static GameDAO gameDAO;
-    private static UserDAO userDAO;
-
-    @BeforeAll
-    public static void init()
-    {
-        authDAO = new RAMAuthDAO();
-        gameDAO = new RAMGameDAO();
-        userDAO = new RAMUserDAO();
-
-        userService = new UserService(userDAO, authDAO);
-        adminService = new AdminService(authDAO, gameDAO, userDAO);
-        gameService = new GameService(gameDAO, authDAO);
-    }
-
-    @AfterAll
-    static void clearTests()
-    {
-        authDAO = null;
-        gameDAO = null;
-        userDAO = null;
-
-        userService = null;
-        adminService = null;
-        gameService = null;
-    }
-
+    
     @Test
     public void clearDatabaseTest()
     {

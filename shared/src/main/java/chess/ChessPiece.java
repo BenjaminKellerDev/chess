@@ -150,7 +150,6 @@ public class ChessPiece
         {
             dir = -1;
         }
-
         //move forward
         ChessPosition checkingPos = new ChessPosition(myPosition.getRow() + dir, myPosition.getColumn());
         //this may be invalid position,
@@ -166,7 +165,6 @@ public class ChessPiece
         {
             canPromote = true;
         }
-
         //check for validity of potential moves
         if (board.getPiece(checkingPos) == null)
         {
@@ -181,7 +179,6 @@ public class ChessPiece
                 possibleMoves.add(new ChessMove(myPosition, checkingPos, PieceType.BISHOP));
                 possibleMoves.add(new ChessMove(myPosition, checkingPos, PieceType.KNIGHT));
             }
-
             //if pawn has not moved yet, check the next square too
             if ((myPosition.getRow() == 2 && pieceColor == ChessGame.TeamColor.WHITE)
                     || (myPosition.getRow() == 7 && pieceColor == ChessGame.TeamColor.BLACK))
@@ -191,7 +188,6 @@ public class ChessPiece
                 {
                     possibleMoves.add(new ChessMove(myPosition, checkingPos, null));
                 }
-
             }
         }
 
@@ -252,12 +248,10 @@ public class ChessPiece
     @Override
     public boolean equals(Object obj)
     {
-        //if memory address is the same
         if (this == obj)
         {
             return true;
         }
-        //if it's a different class
         if (obj == null || getClass() != obj.getClass())
         {
             return false;

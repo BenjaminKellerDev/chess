@@ -69,8 +69,8 @@ public class Server
         try
         {
             AuthData res = userService.register(parsedRequest);
-            String JsonRes = serializer.toJson(res);
-            context.result(JsonRes);
+            String jsonRes = serializer.toJson(res);
+            context.result(jsonRes);
         } catch (DataAccessException e)
         {
             if (e.toString().contains("bad request"))
@@ -160,7 +160,7 @@ public class Server
         CreateGameRequest createGameRequest = serializer.fromJson(context.body(), CreateGameRequest.class);
         try
         {
-            int gameID = gameService.CreateGame(authorization, createGameRequest.gameName());
+            int gameID = gameService.createGame(authorization, createGameRequest.gameName());
             String res = serializer.toJson(new CreateGameResponce(gameID));
             context.result(res);
         } catch (DataAccessException e)

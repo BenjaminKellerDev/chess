@@ -9,48 +9,8 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserServiceTests
+public class UserServiceTests extends BaseServiceTests
 {
-    private static AuthData newAuthData;
-    private static GameData newGameData;
-    private static AdminService adminService;
-    private static UserService userService;
-    private static GameService gameService;
-
-    private static AuthDAO authDAO;
-    private static GameDAO gameDAO;
-    private static UserDAO userDAO;
-
-    @BeforeAll
-    static void init()
-    {
-        authDAO = new RAMAuthDAO();
-        gameDAO = new RAMGameDAO();
-        userDAO = new RAMUserDAO();
-
-        userService = new UserService(userDAO, authDAO);
-        adminService = new AdminService(authDAO, gameDAO, userDAO);
-        gameService = new GameService(gameDAO, authDAO);
-    }
-
-    @AfterAll
-    static void clearTests()
-    {
-        authDAO = null;
-        gameDAO = null;
-        userDAO = null;
-
-        userService = null;
-        adminService = null;
-        gameService = null;
-    }
-
-    @AfterEach
-    void resetState() throws DataAccessException
-    {
-        adminService.dropDatbase();
-    }
-
     @Test
     public void registerGood()
     {

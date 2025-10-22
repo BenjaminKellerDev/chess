@@ -9,48 +9,8 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-public class GameServiceTests
+public class GameServiceTests extends BaseServiceTests
 {
-    private static AuthData newAuthData;
-    private static GameData newGameData;
-    private static AdminService adminService;
-    private static UserService userService;
-    private static GameService gameService;
-
-    private static AuthDAO authDAO;
-    private static GameDAO gameDAO;
-    private static UserDAO userDAO;
-
-    @BeforeAll
-    static void init()
-    {
-        authDAO = new RAMAuthDAO();
-        gameDAO = new RAMGameDAO();
-        userDAO = new RAMUserDAO();
-
-        userService = new UserService(userDAO, authDAO);
-        adminService = new AdminService(authDAO, gameDAO, userDAO);
-        gameService = new GameService(gameDAO, authDAO);
-    }
-
-    @AfterAll
-    static void clearTests()
-    {
-        authDAO = null;
-        gameDAO = null;
-        userDAO = null;
-
-        userService = null;
-        adminService = null;
-        gameService = null;
-    }
-
-    @AfterEach
-    void resetState() throws DataAccessException
-    {
-        adminService.dropDatbase();
-    }
-
     @Test
     public void createGameAuthorized()
     {
@@ -62,8 +22,8 @@ public class GameServiceTests
         AuthData newUserAuthData = authDAO.getAuthByUsername("NewUser").getFirst();
         AuthData differentUserAuthData = authDAO.getAuthByUsername("differentUser").getFirst();
 
-        int newGameID = assertDoesNotThrow(() -> gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame"));
-        int secondGameID = assertDoesNotThrow(() -> gameService.CreateGame(differentUserAuthData.authToken(), "I lost the game"));
+        int newGameID = assertDoesNotThrow(() -> gameService.createGame(newUserAuthData.authToken(), "MyCoolGame"));
+        int secondGameID = assertDoesNotThrow(() -> gameService.createGame(differentUserAuthData.authToken(), "I lost the game"));
 
         assertTrue(newGameID != secondGameID);
     }
@@ -76,7 +36,7 @@ public class GameServiceTests
 
         AuthData newUserAuthData = authDAO.getAuthByUsername("NewUser").getFirst();
 
-        assertThrows(DataAccessException.class, () -> gameService.CreateGame("Incorect Auth askdjhfaskjehf", "MyCoolGame"));
+        assertThrows(DataAccessException.class, () -> gameService.createGame("Incorect Auth askdjhfaskjehf", "MyCoolGame"));
 
         //ask professor what is a better way to test this without throws DataAccessException
         assertTrue(gameService.listGames(newUserAuthData.authToken()).isEmpty());
@@ -93,7 +53,7 @@ public class GameServiceTests
         AuthData newUserAuthData = authDAO.getAuthByUsername("NewUser").getFirst();
         AuthData differentUserAuthData = authDAO.getAuthByUsername("differentUser").getFirst();
 
-        int newGameID = assertDoesNotThrow(() -> gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame"));
+        int newGameID = assertDoesNotThrow(() -> gameService.createGame(newUserAuthData.authToken(), "MyCoolGame"));
 
         JoinGameRequest joinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
         JoinGameRequest diffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), ChessGame.TeamColor.BLACK, newGameID);
@@ -113,7 +73,7 @@ public class GameServiceTests
         AuthData newUserAuthData = authDAO.getAuthByUsername("NewUser").getFirst();
         AuthData differentUserAuthData = authDAO.getAuthByUsername("differentUser").getFirst();
 
-        int newGameID = assertDoesNotThrow(() -> gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame"));
+        int newGameID = assertDoesNotThrow(() -> gameService.createGame(newUserAuthData.authToken(), "MyCoolGame"));
 
         JoinGameRequest validJoinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
         JoinGameRequest wrongColorDiffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
@@ -137,11 +97,11 @@ public class GameServiceTests
         AuthData newUserAuthData = authDAO.getAuthByUsername("NewUser").getFirst();
         AuthData differentUserAuthData = authDAO.getAuthByUsername("differentUser").getFirst();
 
-        int newGameID = gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame");
-        int secondGameID = gameService.CreateGame(differentUserAuthData.authToken(), "i lost the game");
+        int newGameID = gameService.createGame(newUserAuthData.authToken(), "MyCoolGame");
+        int secondGameID = gameService.createGame(differentUserAuthData.authToken(), "i lost the game");
 
         assertTrue(gameService.listGames(newUserAuthData.authToken()).size() == 2);
-        assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).gameID() != gameService.listGames(newUserAuthData.authToken()).get(1).gameID());
+        assertTrue(newGameID != secondGameID);
 
         assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).whiteUsername() == null);
         assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).blackUsername() == null);
@@ -168,8 +128,8 @@ public class GameServiceTests
         AuthData newUserAuthData = authDAO.getAuthByUsername("NewUser").getFirst();
         AuthData differentUserAuthData = authDAO.getAuthByUsername("differentUser").getFirst();
 
-        int newGameID = assertDoesNotThrow(() -> gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame"));
-        int secondGameID = assertDoesNotThrow(() -> gameService.CreateGame(differentUserAuthData.authToken(), "i lost the game"));
+        int newGameID = assertDoesNotThrow(() -> gameService.createGame(newUserAuthData.authToken(), "MyCoolGame"));
+        int secondGameID = assertDoesNotThrow(() -> gameService.createGame(differentUserAuthData.authToken(), "i lost the game"));
 
         assertThrows(DataAccessException.class, () -> gameService.listGames("invalid auth token adfgdfgsfdh"));
 
