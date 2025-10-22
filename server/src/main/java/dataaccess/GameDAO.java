@@ -10,7 +10,7 @@ public interface GameDAO
 
     void createGame(GameData gameData);
 
-    GameData getGame();
+    GameData getGame(int gameID);
 
     List<GameData> listGames();
 

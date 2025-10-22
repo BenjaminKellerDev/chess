@@ -7,6 +7,7 @@ import datamodel.*;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class GameServiceTests
 {
@@ -29,7 +30,7 @@ public class GameServiceTests
 
         userService = new UserService(userDAO, authDAO);
         adminService = new AdminService(authDAO, gameDAO, userDAO);
-        gameService = new GameService(gameDAO);
+        gameService = new GameService(gameDAO, authDAO);
     }
 
     @AfterAll
@@ -92,7 +93,7 @@ public class GameServiceTests
         AuthData newUserAuthData = authDAO.getAuthByUsername("NewUser").getFirst();
         AuthData differentUserAuthData = authDAO.getAuthByUsername("differentUser").getFirst();
 
-        int newGameID = gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame");
+        int newGameID = assertDoesNotThrow(() -> gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame"));
 
         JoinGameRequest joinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
         JoinGameRequest diffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), ChessGame.TeamColor.BLACK, newGameID);
@@ -112,7 +113,7 @@ public class GameServiceTests
         AuthData newUserAuthData = authDAO.getAuthByUsername("NewUser").getFirst();
         AuthData differentUserAuthData = authDAO.getAuthByUsername("differentUser").getFirst();
 
-        int newGameID = gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame");
+        int newGameID = assertDoesNotThrow(() -> gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame"));
 
         JoinGameRequest validJoinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
         JoinGameRequest wrongColorDiffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
@@ -167,8 +168,8 @@ public class GameServiceTests
         AuthData newUserAuthData = authDAO.getAuthByUsername("NewUser").getFirst();
         AuthData differentUserAuthData = authDAO.getAuthByUsername("differentUser").getFirst();
 
-        int newGameID = gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame");
-        int secondGameID = gameService.CreateGame(differentUserAuthData.authToken(), "i lost the game");
+        int newGameID = assertDoesNotThrow(() -> gameService.CreateGame(newUserAuthData.authToken(), "MyCoolGame"));
+        int secondGameID = assertDoesNotThrow(() -> gameService.CreateGame(differentUserAuthData.authToken(), "i lost the game"));
 
         assertThrows(DataAccessException.class, () -> gameService.listGames("invalid auth token adfgdfgsfdh"));
 

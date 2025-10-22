@@ -35,7 +35,7 @@ public class Server
 
         userService = new UserService(userDAO, authDAO);
         adminService = new AdminService(authDAO, gameDAO, userDAO);
-        gameService = new GameService(gameDAO);
+        gameService = new GameService(gameDAO, authDAO);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 

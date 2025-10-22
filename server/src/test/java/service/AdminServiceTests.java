@@ -28,7 +28,7 @@ public class AdminServiceTests
 
         userService = new UserService(userDAO, authDAO);
         adminService = new AdminService(authDAO, gameDAO, userDAO);
-        gameService = new GameService(gameDAO);
+        gameService = new GameService(gameDAO, authDAO);
     }
 
     @AfterAll
@@ -57,12 +57,12 @@ public class AdminServiceTests
 
         assertNotNull(userDAO.getUser(newUser.username()));
         assertNotNull(authDAO.getAuth(newAuthData.authToken()));
-        assertNotNull(gameDAO.getGame());
+        assertNotNull(gameDAO.getGame(1));
 
         assertDoesNotThrow(() -> adminService.dropDatbase());
 
         assertNull(userDAO.getUser(newUser.username()));
         assertNull(authDAO.getAuth(newAuthData.authToken()));
-        assertNull(gameDAO.getGame());
+        assertNull(gameDAO.getGame(1));
     }
 }
