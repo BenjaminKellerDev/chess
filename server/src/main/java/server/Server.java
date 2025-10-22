@@ -75,15 +75,15 @@ public class Server
         {
             if (e.toString().contains("bad request"))
             {
-                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Register Error: " + e.getMessage())));
             }
             else if (e.toString().contains("already taken"))
             {
-                context.status(403).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(403).result(serializer.toJson(new DataAccessExceptionMessage("Register Error: " + e.getMessage())));
             }
             else
             {
-                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Register Error: " + e.getMessage())));
             }
         }
     }
@@ -101,15 +101,15 @@ public class Server
 
             if (e.toString().contains("bad request"))
             {
-                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Login Error: " + e.getMessage())));
             }
             else if (e.toString().contains("unauthorized"))
             {
-                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Login Error: " + e.getMessage())));
             }
             else
             {
-                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Login Error: " + e.getMessage())));
             }
         }
     }
@@ -124,11 +124,11 @@ public class Server
         {
             if (e.toString().contains("unauthorized"))
             {
-                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Logout Error: " + e.getMessage())));
             }
             else
             {
-                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Logout Error: " + e.getMessage())));
             }
         }
     }
@@ -145,11 +145,11 @@ public class Server
         {
             if (e.toString().contains("unauthorized"))
             {
-                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("List Games Error: " + e.getMessage())));
             }
             else
             {
-                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("List Games Error: " + e.getMessage())));
             }
         }
     }
@@ -167,15 +167,15 @@ public class Server
         {
             if (e.toString().contains("bad request"))
             {
-                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Create Game Error: " + e.getMessage())));
             }
             else if (e.toString().contains("unauthorized"))
             {
-                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Create Game Error: " + e.getMessage())));
             }
             else
             {
-                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Create Game Error: " + e.getMessage())));
             }
         }
     }
@@ -192,19 +192,19 @@ public class Server
         {
             if (e.toString().contains("bad request"))
             {
-                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Join Game Error: " + e.getMessage())));
             }
             else if (e.toString().contains("unauthorized"))
             {
-                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Join Game Error: " + e.getMessage())));
             }
             else if (e.toString().contains("already taken"))
             {
-                context.status(403).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(403).result(serializer.toJson(new DataAccessExceptionMessage("Join Game Error: " + e.getMessage())));
             }
             else
             {
-                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Join Game Error: " + e.getMessage())));
             }
         }
     }

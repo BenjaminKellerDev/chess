@@ -1,6 +1,6 @@
 package service;
 
-import chess.ChessGame;
+import chess.ChessGame.TeamColor;
 import model.*;
 import dataaccess.*;
 import datamodel.*;
@@ -55,8 +55,8 @@ public class GameServiceTests extends BaseServiceTests
 
         int newGameID = assertDoesNotThrow(() -> gameService.createGame(newUserAuthData.authToken(), "MyCoolGame"));
 
-        JoinGameRequest joinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
-        JoinGameRequest diffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), ChessGame.TeamColor.BLACK, newGameID);
+        JoinGameRequest joinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), TeamColor.WHITE, newGameID);
+        JoinGameRequest diffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), TeamColor.BLACK, newGameID);
 
         assertDoesNotThrow(() -> gameService.joinGame(joinGameRequest));
         assertDoesNotThrow(() -> gameService.joinGame(diffrentJoinGameRequest));
@@ -75,10 +75,10 @@ public class GameServiceTests extends BaseServiceTests
 
         int newGameID = assertDoesNotThrow(() -> gameService.createGame(newUserAuthData.authToken(), "MyCoolGame"));
 
-        JoinGameRequest validJoinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
-        JoinGameRequest wrongColorDiffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
-        JoinGameRequest wrongGameIDDiffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID + 1);
-        JoinGameRequest noAuthJoinGameRequest = new JoinGameRequest("invalidAuthToken kdjglkjdf", ChessGame.TeamColor.WHITE, newGameID);
+        JoinGameRequest validJoinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), TeamColor.WHITE, newGameID);
+        JoinGameRequest wrongColorDiffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), TeamColor.WHITE, newGameID);
+        JoinGameRequest wrongGameIDDiffrentJoinGameRequest = new JoinGameRequest(differentUserAuthData.authToken(), TeamColor.WHITE, newGameID + 1);
+        JoinGameRequest noAuthJoinGameRequest = new JoinGameRequest("invalidAuthToken kdjglkjdf", TeamColor.WHITE, newGameID);
 
         assertDoesNotThrow(() -> gameService.joinGame(validJoinGameRequest));
         assertThrows(DataAccessException.class, () -> gameService.joinGame(wrongColorDiffrentJoinGameRequest));
@@ -106,7 +106,7 @@ public class GameServiceTests extends BaseServiceTests
         assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).whiteUsername() == null);
         assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).blackUsername() == null);
 
-        JoinGameRequest validJoinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
+        JoinGameRequest validJoinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), TeamColor.WHITE, newGameID);
         assertDoesNotThrow(() -> gameService.joinGame(validJoinGameRequest));
 
         assertFalse(gameService.listGames(newUserAuthData.authToken()).get(0).whiteUsername() == null);
