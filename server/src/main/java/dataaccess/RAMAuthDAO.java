@@ -7,6 +7,7 @@ import java.util.List;
 
 public class RAMAuthDAO implements AuthDAO
 {
+    //migrate to HashSet?
     private List<AuthData> authorizations = new ArrayList<>();
 
     @Override
@@ -37,7 +38,15 @@ public class RAMAuthDAO implements AuthDAO
     @Override
     public List<AuthData> getAuthByUsername(String username)
     {
-        return List.of();
+        List<AuthData> matchingAuths = new ArrayList<>();
+        for (var auth : authorizations)
+        {
+            if (auth.username() == username)
+            {
+                matchingAuths.add(auth);
+            }
+        }
+        return matchingAuths;
     }
 
     @Override

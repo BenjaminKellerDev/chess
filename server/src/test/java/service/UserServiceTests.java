@@ -91,13 +91,11 @@ public class UserServiceTests
         assertThrows(DataAccessException.class, () -> userService.register(sameEmailUser));
 
         assertNotNull(userDAO.getUser(newUser.username()));
-        assertFalse(authDAO.getAuthByUsername(newUser.username()).isEmpty());
 
-        assertNull(userDAO.getUser(sameUsername.username()));
-        assertFalse(authDAO.getAuthByUsername(sameUsername.username()).isEmpty());
+        assertTrue(authDAO.getAuthByUsername(newUser.username()).size() == 1);
 
         assertNull(userDAO.getUser(sameEmailUser.username()));
-        assertFalse(authDAO.getAuthByUsername(sameEmailUser.username()).isEmpty());
+        assertTrue(authDAO.getAuthByUsername(sameEmailUser.username()).isEmpty());
     }
 
     @Test

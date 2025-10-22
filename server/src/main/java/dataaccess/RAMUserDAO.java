@@ -34,4 +34,17 @@ public class RAMUserDAO implements UserDAO
         }
         return null;
     }
+
+    @Override
+    public UserData getUserByEmail(String email)
+    {
+        for (var user : users)
+        {
+            if (user.email().equals(email))
+            {
+                return user;
+            }
+        }
+        return null;
+    }
 }

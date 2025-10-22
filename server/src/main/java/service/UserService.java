@@ -6,6 +6,7 @@ import dataaccess.UserDAO;
 import datamodel.*;
 import model.*;
 
+import java.util.List;
 import java.util.UUID;
 
 public class UserService
@@ -21,6 +22,14 @@ public class UserService
 
     public AuthData register(UserData registerRequest) throws DataAccessException
     {
+        if (userDAO.getUser(registerRequest.username()) != null)
+        {
+            throw new DataAccessException("User Already Registered");
+        }
+        if (userDAO.getUserByEmail(registerRequest.email()) != null)
+        {
+            throw new DataAccessException("Email Already Registered");
+        }
         userDAO.createUser(registerRequest);
         AuthData authData = authorizeUsername(registerRequest.username());
         return authData;
@@ -44,8 +53,18 @@ public class UserService
         }
     }
 
-    public void logout(LogoutRequest logoutRequest)
+    public void logout(LogoutRequest logoutRequest) throws DataAccessException
     {
+        AuthData auth = authDAO.getAuth(logoutRequest.authToken());
+        if (auth == null)
+        {
+            throw new DataAccessException("bad logout auth");
+        }
+        List<AuthData> allAuths = authDAO.getAuthByUsername(auth.username());
+        for (var auths : allAuths)
+        {
+            authDAO.deleteAuth(auths);
+        }
     }
 
     private AuthData authorizeUsername(String username)

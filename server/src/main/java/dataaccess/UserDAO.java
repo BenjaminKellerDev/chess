@@ -10,4 +10,5 @@ public interface UserDAO
 
     UserData getUser(String username);
 
+    UserData getUserByEmail(String email);
 }
