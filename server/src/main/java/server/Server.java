@@ -71,7 +71,18 @@ public class Server
             ctx.result(JsonRes);
         } catch (DataAccessException e)
         {
-            ctx.result(e.toString());
+            if (e.toString().contains("bad request"))
+            {
+                ctx.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else if (e.toString().contains("already taken"))
+            {
+                ctx.status(403).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else
+            {
+                ctx.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
         }
     }
 

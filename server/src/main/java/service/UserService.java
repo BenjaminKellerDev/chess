@@ -23,13 +23,17 @@ public class UserService
 
     public AuthData register(UserData registerRequest) throws DataAccessException
     {
+        if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null)
+        {
+            throw new DataAccessException("bad request");
+        }
         if (userDAO.getUser(registerRequest.username()) != null)
         {
-            throw new DataAccessException("User Already Registered");
+            throw new DataAccessException("already taken");
         }
         if (userDAO.getUserByEmail(registerRequest.email()) != null)
         {
-            throw new DataAccessException("Email Already Registered");
+            throw new DataAccessException("email already taken");
         }
         userDAO.createUser(registerRequest);
         AuthData authData = authorizeUsername(registerRequest.username());
