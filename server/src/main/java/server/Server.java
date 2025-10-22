@@ -114,6 +114,21 @@ public class Server
 
     private void logout(@NotNull Context context)
     {
+        LogoutRequest logoutRequest = new LogoutRequest(context.header("authorization"));
+        try
+        {
+            userService.logout(logoutRequest);
+        } catch (DataAccessException e)
+        {
+            if (e.toString().contains("unauthorized"))
+            {
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else
+            {
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+        }
     }
 
     private void listGames(@NotNull Context context)

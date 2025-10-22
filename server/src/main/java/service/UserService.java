@@ -67,7 +67,7 @@ public class UserService
         AuthData auth = authDAO.getAuth(logoutRequest.authToken());
         if (auth == null)
         {
-            throw new DataAccessException("bad logout auth");
+            throw new DataAccessException("unauthorized");
         }
         List<AuthData> allAuths = authDAO.getAuthByUsername(auth.username());
         for (var auths : allAuths)

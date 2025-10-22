@@ -27,7 +27,7 @@ public class RAMAuthDAO implements AuthDAO
     {
         for (var auth : authorizations)
         {
-            if (auth.authToken() == authToken)
+            if (auth.authToken().equals(authToken))
             {
                 return auth;
             }
@@ -41,7 +41,7 @@ public class RAMAuthDAO implements AuthDAO
         List<AuthData> matchingAuths = new ArrayList<>();
         for (var auth : authorizations)
         {
-            if (auth.username() == username)
+            if (auth.username().equals(username))
             {
                 matchingAuths.add(auth);
             }
