@@ -69,11 +69,7 @@ public class UserService
         {
             throw new DataAccessException("unauthorized");
         }
-        List<AuthData> allAuths = authDAO.getAuthByUsername(auth.username());
-        for (var auths : allAuths)
-        {
-            authDAO.deleteAuth(auths);
-        }
+        authDAO.deleteAuth(auth);
     }
 
     private AuthData authorizeUsername(String username)
