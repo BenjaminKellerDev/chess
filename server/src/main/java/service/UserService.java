@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import dataaccess.DataAccessExceptionMessage;
 import dataaccess.UserDAO;
 import datamodel.*;
 import model.*;
@@ -37,10 +38,14 @@ public class UserService
 
     public AuthData login(LoginRequest loginRequest) throws DataAccessException
     {
+        if (loginRequest.username() == null || loginRequest.password() == null)
+        {
+            throw new DataAccessException("bad request");
+        }
         UserData user = userDAO.getUser(loginRequest.username());
         if (user == null)
         {
-            throw new DataAccessException("Username does not exist");
+            throw new DataAccessException("unauthorized");
         }
         else if (user.username().equals(loginRequest.username()) && user.password().equals(loginRequest.password()))
         {
@@ -49,7 +54,7 @@ public class UserService
         }
         else
         {
-            throw new DataAccessException("Incorrect login info");
+            throw new DataAccessException("unauthorized");
         }
     }
 

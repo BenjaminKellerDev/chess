@@ -42,21 +42,11 @@ public class Server
         javalin.delete("db", this::dropDatabase);
         javalin.post("user", this::register);
         javalin.post("session", this::login);
+        javalin.delete("session", this::logout);
+        javalin.get("game", this::listGames);
+        javalin.post("game", this::createGame);
+        javalin.put("game", this::joinGame);
         // Register your endpoints and exception handlers here.
-    }
-
-    private void login(@NotNull Context ctx)
-    {
-        LoginRequest loginRequest = serializer.fromJson(ctx.body(), LoginRequest.class);
-        try
-        {
-            AuthData authData = userService.login(loginRequest);
-            String res = serializer.toJson(authData);
-            ctx.result(res);
-        } catch (DataAccessException e)
-        {
-            ctx.result(e.toString());
-        }
     }
 
     private void dropDatabase(Context ctx)
@@ -67,7 +57,7 @@ public class Server
             ctx.result("{}");
         } catch (DataAccessException e)
         {
-            ctx.result(e.toString());
+            ctx.status(500).result(serializer.toJson(e.toString()));
         }
     }
 
@@ -83,6 +73,48 @@ public class Server
         {
             ctx.result(e.toString());
         }
+    }
+
+    private void login(@NotNull Context ctx)
+    {
+        LoginRequest loginRequest = serializer.fromJson(ctx.body(), LoginRequest.class);
+        try
+        {
+            AuthData authData = userService.login(loginRequest);
+            String res = serializer.toJson(authData);
+            ctx.result(res);
+        } catch (DataAccessException e)
+        {
+
+            if (e.toString().contains("bad request"))
+            {
+                ctx.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else if (e.toString().contains("unauthorized"))
+            {
+                ctx.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else
+            {
+                ctx.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+        }
+    }
+
+    private void logout(@NotNull Context context)
+    {
+    }
+
+    private void listGames(@NotNull Context context)
+    {
+    }
+
+    private void createGame(@NotNull Context context)
+    {
+    }
+
+    private void joinGame(@NotNull Context context)
+    {
     }
 
     public int run(int desiredPort)
