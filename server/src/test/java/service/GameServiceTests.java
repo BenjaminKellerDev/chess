@@ -143,14 +143,14 @@ public class GameServiceTests
         assertTrue(gameService.listGames(newUserAuthData.authToken()).size() == 2);
         assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).gameID() != gameService.listGames(newUserAuthData.authToken()).get(1).gameID());
 
-        assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).whiteUsername().isEmpty());
-        assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).blackUsername().isEmpty());
+        assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).whiteUsername() == null);
+        assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).blackUsername() == null);
 
         JoinGameRequest validJoinGameRequest = new JoinGameRequest(newUserAuthData.authToken(), ChessGame.TeamColor.WHITE, newGameID);
         assertDoesNotThrow(() -> gameService.joinGame(validJoinGameRequest));
 
-        assertFalse(gameService.listGames(newUserAuthData.authToken()).get(0).whiteUsername().isEmpty());
-        assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).blackUsername().isEmpty());
+        assertFalse(gameService.listGames(newUserAuthData.authToken()).get(0).whiteUsername() == null);
+        assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).blackUsername() == null);
 
         assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).gameName() == "MyCoolGame");
 
