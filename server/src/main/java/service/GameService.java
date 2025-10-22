@@ -29,27 +29,27 @@ public class GameService
         AuthData requestingAuthData = authDAO.getAuth(joinGameRequest.authToken());
         if (requestingAuthData == null)
         {
-            throw new DataAccessException("join game unauthorized");
+            throw new DataAccessException("unauthorized");
         }
         GameData oldGameData = gameDAO.getGame(joinGameRequest.gameID());
         if (oldGameData == null)
         {
-            throw new DataAccessException("game doesn't exist");
+            throw new DataAccessException("bad request");
         }
         GameData newGameData;
         if (joinGameRequest.playerColor() == ChessGame.TeamColor.WHITE)
         {
-            if (oldGameData.whiteUsername() != "")
+            if (oldGameData.whiteUsername() != null)
             {
-                throw new DataAccessException("White team already take");
+                throw new DataAccessException("White team already taken");
             }
             newGameData = oldGameData.updateWhiteUsername(requestingAuthData.username());
         }
         else
         {
-            if (oldGameData.blackUsername() != "")
+            if (oldGameData.blackUsername() != null)
             {
-                throw new DataAccessException("Black team already take");
+                throw new DataAccessException("Black team already taken");
             }
             newGameData = oldGameData.updateBlackUsername(requestingAuthData.username());
         }
@@ -60,7 +60,7 @@ public class GameService
     {
         if (authDAO.getAuth(authToken) == null)
         {
-            throw new DataAccessException("join game unauthorized");
+            throw new DataAccessException("unauthorized");
         }
         return gameDAO.listGames();
     }

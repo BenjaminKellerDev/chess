@@ -51,65 +51,65 @@ public class Server
         // Register your endpoints and exception handlers here.
     }
 
-    private void dropDatabase(Context ctx)
+    private void dropDatabase(Context context)
     {
         try
         {
             adminService.dropDatbase();
-            ctx.result("{}");
+            context.result("{}");
         } catch (DataAccessException e)
         {
-            ctx.status(500).result(serializer.toJson(e.toString()));
+            context.status(500).result(serializer.toJson(e.toString()));
         }
     }
 
-    private void register(Context ctx)
+    private void register(Context context)
     {
-        UserData parsedRequest = serializer.fromJson(ctx.body(), UserData.class);
+        UserData parsedRequest = serializer.fromJson(context.body(), UserData.class);
         try
         {
             AuthData res = userService.register(parsedRequest);
             String JsonRes = serializer.toJson(res);
-            ctx.result(JsonRes);
+            context.result(JsonRes);
         } catch (DataAccessException e)
         {
             if (e.toString().contains("bad request"))
             {
-                ctx.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
             }
             else if (e.toString().contains("already taken"))
             {
-                ctx.status(403).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(403).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
             }
             else
             {
-                ctx.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
             }
         }
     }
 
-    private void login(@NotNull Context ctx)
+    private void login(@NotNull Context context)
     {
-        LoginRequest loginRequest = serializer.fromJson(ctx.body(), LoginRequest.class);
+        LoginRequest loginRequest = serializer.fromJson(context.body(), LoginRequest.class);
         try
         {
             AuthData authData = userService.login(loginRequest);
             String res = serializer.toJson(authData);
-            ctx.result(res);
+            context.result(res);
         } catch (DataAccessException e)
         {
 
             if (e.toString().contains("bad request"))
             {
-                ctx.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
             }
             else if (e.toString().contains("unauthorized"))
             {
-                ctx.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
             }
             else
             {
-                ctx.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
             }
         }
     }
@@ -139,7 +139,7 @@ public class Server
         try
         {
             List<GameData> listOfGames = gameService.listGames(authorization);
-            String res = serializer.toJson(listOfGames);
+            String res = serializer.toJson(new ListGamesResponse(listOfGames));
             context.result(res);
         } catch (DataAccessException e)
         {
@@ -182,6 +182,31 @@ public class Server
 
     private void joinGame(@NotNull Context context)
     {
+        String authorization = context.header("authorization");
+        JoinGameRequest joinGameRequest = serializer.fromJson(context.body(), JoinGameRequest.class);
+        joinGameRequest = joinGameRequest.addAuth(authorization);
+        try
+        {
+            gameService.joinGame(joinGameRequest);
+        } catch (DataAccessException e)
+        {
+            if (e.toString().contains("bad request"))
+            {
+                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else if (e.toString().contains("unauthorized"))
+            {
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else if (e.toString().contains("already taken"))
+            {
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else
+            {
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+        }
     }
 
     public int run(int desiredPort)
