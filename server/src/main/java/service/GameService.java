@@ -15,7 +15,7 @@ public class GameService
     private final GameDAO gameDAO;
     private final AuthDAO authDAO;
 
-    private int nextGameID = 0;
+    private int nextGameID = 1;
 
     public GameService(GameDAO gameDAO, AuthDAO authDAO)
     {
@@ -68,9 +68,13 @@ public class GameService
     //game id, perhaps replace with gameData
     public int CreateGame(String authToken, String gameName) throws DataAccessException
     {
+        if (authToken == null || gameName == null)
+        {
+            throw new DataAccessException("bad request");
+        }
         if (authDAO.getAuth(authToken) == null)
         {
-            throw new DataAccessException("join game unauthorized");
+            throw new DataAccessException("unauthorized");
         }
         gameDAO.createGame(new GameData(nextGameID, gameName));
         nextGameID++;

@@ -11,6 +11,8 @@ import service.AdminService;
 import service.GameService;
 import service.UserService;
 
+import java.util.List;
+
 public class Server
 {
 
@@ -133,10 +135,49 @@ public class Server
 
     private void listGames(@NotNull Context context)
     {
+        String authorization = context.header("authorization");
+        try
+        {
+            List<GameData> listOfGames = gameService.listGames(authorization);
+            String res = serializer.toJson(listOfGames);
+            context.result(res);
+        } catch (DataAccessException e)
+        {
+            if (e.toString().contains("unauthorized"))
+            {
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else
+            {
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+        }
     }
 
     private void createGame(@NotNull Context context)
     {
+        String authorization = context.header("authorization");
+        CreateGameRequest createGameRequest = serializer.fromJson(context.body(), CreateGameRequest.class);
+        try
+        {
+            int gameID = gameService.CreateGame(authorization, createGameRequest.gameName());
+            String res = serializer.toJson(new CreateGameResponce(gameID));
+            context.result(res);
+        } catch (DataAccessException e)
+        {
+            if (e.toString().contains("bad request"))
+            {
+                context.status(400).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else if (e.toString().contains("unauthorized"))
+            {
+                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+            else
+            {
+                context.status(500).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+            }
+        }
     }
 
     private void joinGame(@NotNull Context context)
