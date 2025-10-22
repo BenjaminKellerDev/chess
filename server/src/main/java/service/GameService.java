@@ -26,6 +26,10 @@ public class GameService
 
     public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException
     {
+        if (joinGameRequest.playerColor() == null)
+        {
+            throw new DataAccessException("bad request");
+        }
         AuthData requestingAuthData = authDAO.getAuth(joinGameRequest.authToken());
         if (requestingAuthData == null)
         {

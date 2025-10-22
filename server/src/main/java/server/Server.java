@@ -200,7 +200,7 @@ public class Server
             }
             else if (e.toString().contains("already taken"))
             {
-                context.status(401).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
+                context.status(403).result(serializer.toJson(new DataAccessExceptionMessage("Error: " + e.getMessage())));
             }
             else
             {
