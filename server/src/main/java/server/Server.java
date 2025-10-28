@@ -31,9 +31,9 @@ public class Server
     public Server()
     {
 
-        authDAO = new RAMAuthDAO();
-        gameDAO = new RAMGameDAO();
-        userDAO = new RAMUserDAO();
+        authDAO = new MySQLAuthDAO();
+        gameDAO = new MySQLGameDAO();
+        userDAO = new MySQLUserDAO();
 
         userService = new UserService(userDAO, authDAO);
         adminService = new AdminService(authDAO, gameDAO, userDAO);
@@ -48,7 +48,8 @@ public class Server
         javalin.get("game", this::listGames);
         javalin.post("game", this::createGame);
         javalin.put("game", this::joinGame);
-        // Register your endpoints and exception handlers here.
+        // To-Do: Register your endpoints and exception handlers here.
+        //javalin.exception(DataAccess.class, this::exceptionHandler)
     }
 
     private void dropDatabase(Context context)

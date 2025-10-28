@@ -22,9 +22,9 @@ public class BaseServiceTests
     @BeforeAll
     static void init()
     {
-        authDAO = new RAMAuthDAO();
-        gameDAO = new RAMGameDAO();
-        userDAO = new RAMUserDAO();
+        authDAO = new MySQLAuthDAO();
+        gameDAO = new MySQLGameDAO();
+        userDAO = new MySQLUserDAO();
 
         userService = new UserService(userDAO, authDAO);
         adminService = new AdminService(authDAO, gameDAO, userDAO);
