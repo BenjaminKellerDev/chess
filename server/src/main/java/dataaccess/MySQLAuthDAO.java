@@ -3,8 +3,11 @@ package dataaccess;
 import model.AuthData;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+
+import static java.sql.Types.NULL;
 
 public class MySQLAuthDAO implements AuthDAO
 {
@@ -14,9 +17,10 @@ public class MySQLAuthDAO implements AuthDAO
     }
 
     @Override
-    public void clear()
+    public void clear() throws ResponseException
     {
-
+        String statement = "TRUNCATE auths";
+        executeUpdate(statement);
     }
 
     @Override
@@ -41,6 +45,35 @@ public class MySQLAuthDAO implements AuthDAO
     public void deleteAuth(AuthData authData)
     {
 
+    }
+
+    private void executeUpdate(String statement, Object... params) throws ResponseException
+    {
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            try (PreparedStatement ps = conn.prepareStatement(statement))
+            {
+                for (int i = 0; i < params.length; i++)
+                {
+                    if (params[i] instanceof String p)
+                    {
+                        ps.setString(i + 1, p);
+                    }
+                    else if (params[i] instanceof Integer p)
+                    {
+                        ps.setInt(i + 1, p);
+                    }
+                    else if (params[i] == null)
+                    {
+                        ps.setNull(i + 1, NULL);
+                    }
+                }
+                ps.executeUpdate();
+            }
+        } catch (Exception e)
+        {
+            throw new ResponseException(500, e.getMessage());
+        }
     }
 
     private final String[] createStatement = {

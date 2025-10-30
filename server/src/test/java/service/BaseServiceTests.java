@@ -46,6 +46,6 @@ public class BaseServiceTests
     @AfterEach
     void resetState() throws DataAccessException
     {
-        adminService.dropDatbase();
+        adminService.dropDatabase();
     }
 }

@@ -15,10 +15,16 @@ public class AdminService
         this.userDAO = userDAO;
     }
 
-    public void dropDatbase() throws DataAccessException
+    public void dropDatabase() throws DataAccessException
     {
-        authDAO.clear();
-        gameDAO.clear();
-        userDAO.clear();
+        try
+        {
+            authDAO.clear();
+            gameDAO.clear();
+            userDAO.clear();
+        } catch (ResponseException e)
+        {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 }

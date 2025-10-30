@@ -56,7 +56,7 @@ public class Server
     {
         try
         {
-            adminService.dropDatbase();
+            adminService.dropDatabase();
             context.result("{}");
         } catch (DataAccessException e)
         {

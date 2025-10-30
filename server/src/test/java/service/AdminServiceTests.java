@@ -2,15 +2,13 @@ package service;
 
 import chess.ChessGame;
 import model.*;
-import dataaccess.*;
-import datamodel.*;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AdminServiceTests extends BaseServiceTests
 {
-    
+
     @Test
     public void clearDatabaseTest()
     {
@@ -27,7 +25,7 @@ public class AdminServiceTests extends BaseServiceTests
         assertNotNull(authDAO.getAuth(newAuthData.authToken()));
         assertNotNull(gameDAO.getGame(1));
 
-        assertDoesNotThrow(() -> adminService.dropDatbase());
+        assertDoesNotThrow(() -> adminService.dropDatabase());
 
         assertNull(userDAO.getUser(newUser.username()));
         assertNull(authDAO.getAuth(newAuthData.authToken()));

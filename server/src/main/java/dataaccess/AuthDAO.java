@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AuthDAO
 {
-    void clear();
+    void clear() throws ResponseException;
 
     void createAuth(AuthData authData);
 
