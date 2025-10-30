@@ -10,7 +10,7 @@ public class MySQLAuthDAO implements AuthDAO
 {
     public MySQLAuthDAO()
     {
-        initializeDatabase();
+        initializeTableDB();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class MySQLAuthDAO implements AuthDAO
 
     private final String[] createStatement = {
             """
-            CREATE TABLE IF NOT EXISTS auth (
+            CREATE TABLE IF NOT EXISTS auths (
             authToken varchar(256) NOT NULL,
             username varchar(256) NOT NULL,
             PRIMARY KEY (authToken)
@@ -53,7 +53,7 @@ public class MySQLAuthDAO implements AuthDAO
             """
     };
 
-    private void initializeDatabase()
+    private void initializeTableDB()
     {
         try
         {
