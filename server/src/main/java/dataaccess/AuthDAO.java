@@ -6,7 +6,10 @@ import java.util.List;
 
 public interface AuthDAO
 {
-    void clear() throws ResponseException;
+    //if I have time I want to redo these to throw the dataAccess Exception
+    //and then Services handel Response Exception with appropriate error code
+    //Perhaps even just pass an exception all the way up to SERVER and redesign tests
+    void clear();
 
     void createAuth(AuthData authData);
 
