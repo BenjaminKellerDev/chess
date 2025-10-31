@@ -60,7 +60,7 @@ public class MySQLAuthDAO implements AuthDAO
             return null;
         } catch (DataAccessException e)
         {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -89,7 +89,7 @@ public class MySQLAuthDAO implements AuthDAO
             return null;
         } catch (DataAccessException e)
         {
-            return null;
+            throw new RuntimeException(e);
         }
         return matchingAuths;
     }

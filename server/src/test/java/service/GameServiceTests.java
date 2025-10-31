@@ -112,7 +112,7 @@ public class GameServiceTests extends BaseServiceTests
         assertFalse(gameService.listGames(newUserAuthData.authToken()).get(0).whiteUsername() == null);
         assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).blackUsername() == null);
 
-        assertTrue(gameService.listGames(newUserAuthData.authToken()).get(0).gameName() == "MyCoolGame");
+        assertEquals("MyCoolGame", gameService.listGames(newUserAuthData.authToken()).get(0).gameName());
 
         assertNotNull(gameService.listGames(newUserAuthData.authToken()).get(0).game());
     }

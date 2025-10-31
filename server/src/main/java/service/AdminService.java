@@ -17,8 +17,10 @@ public class AdminService
 
     public void dropDatabase() throws DataAccessException
     {
+
         authDAO.clear();
         gameDAO.clear();
         userDAO.clear();
+
     }
 }

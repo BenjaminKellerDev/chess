@@ -55,7 +55,7 @@ public class MySQLGameDAO implements GameDAO
             return null;
         } catch (DataAccessException e)
         {
-            return null;
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -78,7 +78,7 @@ public class MySQLGameDAO implements GameDAO
             return null;
         } catch (DataAccessException e)
         {
-            return null;
+            throw new RuntimeException(e);
         }
         return gameList;
     }

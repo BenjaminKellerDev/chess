@@ -58,7 +58,7 @@ public class MySQLUserDAO implements UserDAO
             return null;
         } catch (DataAccessException e)
         {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -91,7 +91,7 @@ public class MySQLUserDAO implements UserDAO
             return null;
         } catch (DataAccessException e)
         {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
