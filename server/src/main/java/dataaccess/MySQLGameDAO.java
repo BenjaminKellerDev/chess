@@ -81,8 +81,8 @@ public class MySQLGameDAO implements GameDAO
             """
             CREATE TABLE IF NOT EXISTS games (
             gameID int NOT NULL AUTO_INCREMENT,
-            whiteUsername varchar(256) NOT NULL,
-            blackUsername varchar(256) NOT NULL,
+            whiteUsername varchar(256) DEFAULT NULL,
+            blackUsername varchar(256) DEFAULT NULL,
             gameName varchar(256) NOT NULL,
             game TEXT DEFAULT NULL,
             PRIMARY KEY (gameID)
