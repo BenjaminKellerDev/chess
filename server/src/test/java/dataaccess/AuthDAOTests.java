@@ -11,7 +11,7 @@ public class AuthDAOTests extends BaseDAOTests
 {
     //   void clear();
     @Test
-    public void clearAll()
+    public void clearTest()
     {
         String testAuthToken = generateToken();
         AuthData authData = new AuthData(testAuthToken, "testAuth");

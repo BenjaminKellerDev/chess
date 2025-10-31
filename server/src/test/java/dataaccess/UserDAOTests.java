@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserDAOTests extends BaseDAOTests
 {
     @Test
-    public void clearAll()
+    public void clearTest()
     {
         UserData newUser = new UserData("newUsername", "super cool password", "email@example.com");
         userDAO.createUser(newUser);

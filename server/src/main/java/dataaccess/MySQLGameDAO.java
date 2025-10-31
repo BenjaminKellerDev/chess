@@ -1,5 +1,6 @@
 package dataaccess;
 
+import com.google.gson.Gson;
 import model.GameData;
 
 import java.sql.Connection;
@@ -8,6 +9,8 @@ import java.util.List;
 
 public class MySQLGameDAO implements GameDAO
 {
+    private static Gson serializer = new Gson();
+
     public MySQLGameDAO()
     {
         initializeTableDB();
@@ -16,13 +19,16 @@ public class MySQLGameDAO implements GameDAO
     @Override
     public void clear()
     {
-
+        String statement = "TRUNCATE games";
+        DatabaseManager.executeUpdate(statement);
     }
 
     @Override
     public void createGame(GameData gameData)
     {
-
+        String gameJSON = serializer.toJson(gameData.game());
+        String statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?,?,?,?)";
+        DatabaseManager.executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameJSON);
     }
 
     @Override
@@ -40,7 +46,9 @@ public class MySQLGameDAO implements GameDAO
     @Override
     public void updateGame(GameData gameData)
     {
-
+        String gameJSON = serializer.toJson(gameData.game());
+        String statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE gameID=?";
+        DatabaseManager.executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameJSON, gameData.gameID());
     }
 
     private final String[] createStatement = {
@@ -61,7 +69,6 @@ public class MySQLGameDAO implements GameDAO
         try
         {
             DatabaseManager.createDatabase();
-
             try (Connection conn = DatabaseManager.getConnection())
             {
                 for (String statement : createStatement)
