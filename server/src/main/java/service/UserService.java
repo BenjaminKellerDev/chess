@@ -2,12 +2,11 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.DataAccessExceptionMessage;
 import dataaccess.UserDAO;
 import datamodel.*;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.List;
 import java.util.UUID;
 
 public class UserService
@@ -35,7 +34,7 @@ public class UserService
         {
             throw new DataAccessException("email already taken");
         }
-        userDAO.createUser(registerRequest);
+        storeUserPassword(registerRequest);
         AuthData authData = authorizeUsername(registerRequest.username());
         return authData;
     }
@@ -51,7 +50,7 @@ public class UserService
         {
             throw new DataAccessException("unauthorized");
         }
-        else if (user.username().equals(loginRequest.username()) && user.password().equals(loginRequest.password()))
+        else if (user.username().equals(loginRequest.username()) && verifyHashedPassword(user, loginRequest.password()))
         {
             AuthData authData = authorizeUsername(loginRequest.username());
             return authData;
@@ -70,6 +69,23 @@ public class UserService
             throw new DataAccessException("unauthorized");
         }
         authDAO.deleteAuth(auth);
+    }
+
+    private void storeUserPassword(UserData registerRequestWithClearTextPassword)
+    {
+        String hashedPassword = BCrypt.hashpw(registerRequestWithClearTextPassword.password(), BCrypt.gensalt());
+
+        UserData updatedPassword = registerRequestWithClearTextPassword.updatePassword(hashedPassword);
+
+        userDAO.createUser(updatedPassword);
+    }
+
+    private boolean verifyHashedPassword(UserData databaseUserInfo, String providedClearTextPassword)
+    {
+        // read the previously hashed password from the database
+        var hashedPassword = databaseUserInfo.password();
+
+        return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
     }
 
     private AuthData authorizeUsername(String username)

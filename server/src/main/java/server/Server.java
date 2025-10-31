@@ -26,7 +26,7 @@ public class Server
     private final GameDAO gameDAO;
     private final UserDAO userDAO;
 
-    private static Gson serializer = new Gson();
+    private static final Gson serializer = new Gson();
 
     public Server()
     {
