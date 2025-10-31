@@ -15,7 +15,6 @@ public class GameService
     private final GameDAO gameDAO;
     private final AuthDAO authDAO;
 
-    private int nextGameID = 1;
 
     public GameService(GameDAO gameDAO, AuthDAO authDAO)
     {
@@ -80,8 +79,7 @@ public class GameService
         {
             throw new DataAccessException("unauthorized");
         }
-        gameDAO.createGame(new GameData(nextGameID, gameName));
-        nextGameID++;
-        return nextGameID - 1;
+        int gameID = gameDAO.createGame(new GameData(gameName));
+        return gameID;
     }
 }

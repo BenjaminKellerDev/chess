@@ -8,7 +8,7 @@ public interface GameDAO
 {
     void clear();
 
-    void createGame(GameData gameData);
+    int createGame(GameData gameData);
 
     GameData getGame(int gameID);
 

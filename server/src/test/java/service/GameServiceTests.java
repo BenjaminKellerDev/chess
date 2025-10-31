@@ -43,7 +43,7 @@ public class GameServiceTests extends BaseServiceTests
     }
 
     @Test
-    public void joinGameVaid()
+    public void joinGameValid()
     {
         UserData newUser = new UserData("NewUser", "newUserPassword", "nu@mail.com");
         UserData differentUser = new UserData("differentUser", "differentUserPassword", "dif@mail.com");

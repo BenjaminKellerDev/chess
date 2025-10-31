@@ -29,11 +29,32 @@ public class MySQLGameDAO implements GameDAO
     }
 
     @Override
-    public void createGame(GameData gameData)
+    public int createGame(GameData gameData)
     {
         String gameJSON = serializer.toJson(gameData.game());
-        String statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?,?,?,?)";
-        DatabaseManager.executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameJSON);
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?,?,?,?)";
+            PreparedStatement ps = conn.prepareStatement(statement);
+            ps.setString(1, gameData.whiteUsername());
+            ps.setString(2, gameData.blackUsername());
+            ps.setString(3, gameData.gameName());
+            ps.setString(4, gameJSON);
+            ps.executeUpdate();
+            PreparedStatement latestID = conn.prepareStatement("SELECT LAST_INSERT_ID()");
+            ResultSet rs = latestID.executeQuery();
+            if (rs.next())
+            {
+                return rs.getInt("LAST_INSERT_ID()");
+            }
+        } catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
+        throw new RuntimeException("Serious MySQL error");
     }
 
     @Override

@@ -12,6 +12,8 @@ public class RAMGameDAO implements GameDAO
 
     private List<GameData> gameList = new ArrayList<>();
 
+    private int nextGameID = 1;
+
     @Override
     public void clear()
     {
@@ -19,9 +21,11 @@ public class RAMGameDAO implements GameDAO
     }
 
     @Override
-    public void createGame(GameData gameData)
+    public int createGame(GameData gameData)
     {
         gameList.add(gameData);
+        nextGameID++;
+        return nextGameID - 1;
     }
 
     @Override
