@@ -40,7 +40,7 @@ public class GameDAOTests extends BaseDAOTests
     {
         GameData gameData = new GameData(-1, null, null, null, null);
         assertNull(gameDAO.getGame(1));
-        gameDAO.createGame(gameData);
+        assertThrows(RuntimeException.class, () -> gameDAO.createGame(gameData));
         assertNull(gameDAO.getGame(1));
     }
 
@@ -83,7 +83,7 @@ public class GameDAOTests extends BaseDAOTests
             nameTooLong.append('a');
         }
         GameData gameData = new GameData(1, "newUsername", nameTooLong.toString(), "NEW GAME", new ChessGame());
-        gameDAO.createGame(gameData);
+        assertThrows(RuntimeException.class, () -> gameDAO.createGame(gameData));
         assertEquals(0, gameDAO.listGames().size());
     }
 
