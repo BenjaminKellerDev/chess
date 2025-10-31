@@ -15,6 +15,7 @@ public interface AuthDAO
 
     AuthData getAuth(String authToken);
 
+    //TO-DO rewrite test to remove the need for this function
     List<AuthData> getAuthByUsername(String username);
 
     void deleteAuth(AuthData authData);

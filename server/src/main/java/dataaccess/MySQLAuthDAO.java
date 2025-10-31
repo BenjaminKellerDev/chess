@@ -22,14 +22,14 @@ public class MySQLAuthDAO implements AuthDAO
     public void clear()
     {
         String statement = "TRUNCATE auths";
-        executeUpdate(statement);
+        DatabaseManager.executeUpdate(statement);
     }
 
     @Override
     public void createAuth(AuthData authData)
     {
         String statement = "INSERT INTO auths (authToken, username) VALUES (?, ?)";
-        executeUpdate(statement, authData.authToken(), authData.username());
+        DatabaseManager.executeUpdate(statement, authData.authToken(), authData.username());
     }
 
     @Override
@@ -115,37 +115,6 @@ public class MySQLAuthDAO implements AuthDAO
         }
     }
 
-    private void executeUpdate(String statement, Object... params)
-    {
-        try (Connection conn = DatabaseManager.getConnection())
-        {
-            try (PreparedStatement ps = conn.prepareStatement(statement))
-            {
-                for (int i = 0; i < params.length; i++)
-                {
-                    if (params[i] instanceof String p)
-                    {
-                        ps.setString(i + 1, p);
-                    }
-                    else if (params[i] instanceof Integer p)
-                    {
-                        ps.setInt(i + 1, p);
-                    }
-                    else if (params[i] == null)
-                    {
-                        ps.setNull(i + 1, NULL);
-                    }
-                }
-                ps.executeUpdate();
-            }
-        } catch (SQLException e)
-        {
-            System.out.println("NOTICE: " + e.getMessage());
-        } catch (DataAccessException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
 
     private final String[] createStatement = {
             """
