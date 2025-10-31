@@ -56,7 +56,7 @@ public class UserDAOTests extends BaseDAOTests
         UserData invalid = new UserData("different", "different password", "diffrent@example.com");
         assertNull(userDAO.getUser(newUser.username()));
         userDAO.createUser(newUser);
-        assertNotNull(userDAO.getUser(invalid.username()));
+        assertNull(userDAO.getUser(invalid.username()));
     }
 
     //UserData getUserByEmail(String email);
