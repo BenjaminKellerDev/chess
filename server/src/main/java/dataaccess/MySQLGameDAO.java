@@ -1,9 +1,12 @@
 package dataaccess;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -34,6 +37,29 @@ public class MySQLGameDAO implements GameDAO
     @Override
     public GameData getGame(int gameID)
     {
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games WHERE gameID=?";
+            PreparedStatement ps = conn.prepareStatement(statement);
+            ps.setInt(1, gameID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next())
+            {
+                int gameIDreturn = rs.getInt("gameID");
+                String whiteUsername = rs.getString("whiteUsername");
+                String blackUsername = rs.getString("blackUsername");
+                String gameName = rs.getString("gameName");
+                ChessGame game = serializer.fromJson(rs.getString("game"), ChessGame.class);
+                return new GameData(gameIDreturn, whiteUsername, blackUsername, gameName, game);
+            }
+        } catch (SQLException e)
+        {
+            System.out.println("NOTICE: " + e.getMessage());
+            return null;
+        } catch (DataAccessException e)
+        {
+            return null;
+        }
         return null;
     }
 
