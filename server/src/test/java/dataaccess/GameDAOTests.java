@@ -64,6 +64,28 @@ public class GameDAOTests extends BaseDAOTests
     }
 
     //List<GameData> listGames();
+    @Test
+    public void listGameTest()
+    {
+        assertEquals(0, gameDAO.listGames().size());
+        GameData gameData = new GameData(1, "newUsername", null, "NEW GAME", new ChessGame());
+        gameDAO.createGame(gameData);
+        assertEquals(1, gameDAO.listGames().size());
+    }
+
+    @Test
+    public void listGameInvalid()
+    {
+        assertEquals(0, gameDAO.listGames().size());
+        StringBuilder nameTooLong = new StringBuilder();
+        for (int i = 0; i < 300; i++)
+        {
+            nameTooLong.append('a');
+        }
+        GameData gameData = new GameData(1, "newUsername", nameTooLong.toString(), "NEW GAME", new ChessGame());
+        gameDAO.createGame(gameData);
+        assertEquals(0, gameDAO.listGames().size());
+    }
 
     //void updateGame(GameData gameData);
     @Test

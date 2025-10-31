@@ -2,12 +2,14 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import model.AuthData;
 import model.GameData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MySQLGameDAO implements GameDAO
@@ -45,12 +47,7 @@ public class MySQLGameDAO implements GameDAO
             ResultSet rs = ps.executeQuery();
             if (rs.next())
             {
-                int gameIDreturn = rs.getInt("gameID");
-                String whiteUsername = rs.getString("whiteUsername");
-                String blackUsername = rs.getString("blackUsername");
-                String gameName = rs.getString("gameName");
-                ChessGame game = serializer.fromJson(rs.getString("game"), ChessGame.class);
-                return new GameData(gameIDreturn, whiteUsername, blackUsername, gameName, game);
+                return processGameDataResult(rs);
             }
         } catch (SQLException e)
         {
@@ -66,7 +63,24 @@ public class MySQLGameDAO implements GameDAO
     @Override
     public List<GameData> listGames()
     {
-        return List.of();
+        List<GameData> gameList = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection())
+        {
+            String statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games";
+            PreparedStatement ps = conn.prepareStatement(statement);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next())
+            {
+                gameList.add(processGameDataResult(rs));
+            }
+        } catch (SQLException e) // see note on AuthDAO for refactor idea
+        {
+            return null;
+        } catch (DataAccessException e)
+        {
+            return null;
+        }
+        return gameList;
     }
 
     @Override
@@ -75,6 +89,16 @@ public class MySQLGameDAO implements GameDAO
         String gameJSON = serializer.toJson(gameData.game());
         String statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE gameID=?";
         DatabaseManager.executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameJSON, gameData.gameID());
+    }
+
+    private GameData processGameDataResult(ResultSet rs) throws SQLException
+    {
+        int gameID = rs.getInt("gameID");
+        String whiteUsername = rs.getString("whiteUsername");
+        String blackUsername = rs.getString("blackUsername");
+        String gameName = rs.getString("gameName");
+        ChessGame game = serializer.fromJson(rs.getString("game"), ChessGame.class);
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 
     private final String[] createStatement = {
