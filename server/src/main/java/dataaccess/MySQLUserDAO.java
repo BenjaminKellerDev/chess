@@ -10,9 +10,22 @@ import java.sql.SQLException;
 
 public class MySQLUserDAO implements UserDAO
 {
+    //String username, String password, String email
+    private final String[] createStatement = {
+            """
+            CREATE TABLE IF NOT EXISTS users (
+            username varchar(256) NOT NULL,
+            password varchar(256) NOT NULL,
+            email varchar(256) NOT NULL,
+            PRIMARY KEY (username),
+            INDEX(email)
+            )
+            """
+    };
+
     public MySQLUserDAO()
     {
-        initializeTableDB();
+        DatabaseManager.initializeTable(createStatement);
     }
 
     @Override
@@ -54,7 +67,7 @@ public class MySQLUserDAO implements UserDAO
             }
         } catch (SQLException e)
         {
-            System.out.println("NOTICE: " + e.getMessage());
+            System.out.println("NOTICE from getUser: " + e.getMessage());
             return null;
         } catch (DataAccessException e)
         {
@@ -87,7 +100,7 @@ public class MySQLUserDAO implements UserDAO
             }
         } catch (SQLException e)
         {
-            System.out.println("NOTICE: " + e.getMessage());
+            System.out.println("NOTICE from getUserByEmail: " + e.getMessage());
             return null;
         } catch (DataAccessException e)
         {
@@ -95,41 +108,4 @@ public class MySQLUserDAO implements UserDAO
         }
     }
 
-    //String username, String password, String email
-    private final String[] createStatement = {
-            """
-            CREATE TABLE IF NOT EXISTS users (
-            username varchar(256) NOT NULL,
-            password varchar(256) NOT NULL,
-            email varchar(256) NOT NULL,
-            PRIMARY KEY (username),
-            INDEX(email)
-            )
-            """
-    };
-
-    private void initializeTableDB()
-    {
-        try
-        {
-            DatabaseManager.createDatabase();
-
-            try (Connection conn = DatabaseManager.getConnection())
-            {
-                for (String statement : createStatement)
-                {
-                    try (var preparedStatement = conn.prepareStatement(statement))
-                    {
-                        preparedStatement.executeUpdate();
-                    }
-                }
-            } catch (SQLException e)
-            {
-                throw new RuntimeException(e);
-            }
-        } catch (DataAccessException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
 }

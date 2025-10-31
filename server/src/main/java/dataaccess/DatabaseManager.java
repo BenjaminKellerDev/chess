@@ -123,4 +123,28 @@ public class DatabaseManager
         }
     }
 
+    static void initializeTable(String[] createStatement)
+    {
+        try
+        {
+            DatabaseManager.createDatabase();
+            try (Connection conn = DatabaseManager.getConnection())
+            {
+                for (String statement : createStatement)
+                {
+                    try (var preparedStatement = conn.prepareStatement(statement))
+                    {
+                        preparedStatement.executeUpdate();
+                    }
+                }
+            } catch (SQLException e)
+            {
+                throw new RuntimeException(e);
+            }
+        } catch (DataAccessException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

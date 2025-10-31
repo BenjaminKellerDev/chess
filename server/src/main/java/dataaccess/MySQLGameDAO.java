@@ -2,7 +2,6 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 
 import java.sql.Connection;
@@ -16,9 +15,23 @@ public class MySQLGameDAO implements GameDAO
 {
     private static Gson serializer = new Gson();
 
+
+    private final String[] createStatement = {
+            """
+            CREATE TABLE IF NOT EXISTS games (
+            gameID int NOT NULL AUTO_INCREMENT,
+            whiteUsername varchar(256) DEFAULT NULL,
+            blackUsername varchar(256) DEFAULT NULL,
+            gameName varchar(256) NOT NULL,
+            game TEXT DEFAULT NULL,
+            PRIMARY KEY (gameID)
+            )
+            """
+    };
+
     public MySQLGameDAO()
     {
-        initializeTableDB();
+        DatabaseManager.initializeTable(createStatement);
     }
 
     @Override
@@ -105,11 +118,11 @@ public class MySQLGameDAO implements GameDAO
     }
 
     @Override
-    public void updateGame(GameData gameData)
+    public void updateGame(GameData GUpdate)
     {
-        String gameJSON = serializer.toJson(gameData.game());
+        String gameJSON = serializer.toJson(GUpdate.game());
         String statement = "UPDATE games SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE gameID=?";
-        DatabaseManager.executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameJSON, gameData.gameID());
+        DatabaseManager.executeUpdate(statement, GUpdate.whiteUsername(), GUpdate.blackUsername(), GUpdate.gameName(), gameJSON, GUpdate.gameID());
     }
 
     private GameData processGameDataResult(ResultSet rs) throws SQLException
@@ -122,40 +135,5 @@ public class MySQLGameDAO implements GameDAO
         return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 
-    private final String[] createStatement = {
-            """
-            CREATE TABLE IF NOT EXISTS games (
-            gameID int NOT NULL AUTO_INCREMENT,
-            whiteUsername varchar(256) DEFAULT NULL,
-            blackUsername varchar(256) DEFAULT NULL,
-            gameName varchar(256) NOT NULL,
-            game TEXT DEFAULT NULL,
-            PRIMARY KEY (gameID)
-            )
-            """
-    };
 
-    private void initializeTableDB()
-    {
-        try
-        {
-            DatabaseManager.createDatabase();
-            try (Connection conn = DatabaseManager.getConnection())
-            {
-                for (String statement : createStatement)
-                {
-                    try (var preparedStatement = conn.prepareStatement(statement))
-                    {
-                        preparedStatement.executeUpdate();
-                    }
-                }
-            } catch (SQLException e)
-            {
-                throw new RuntimeException(e);
-            }
-        } catch (DataAccessException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
 }

@@ -13,9 +13,19 @@ import static java.sql.Types.NULL;
 
 public class MySQLAuthDAO implements AuthDAO
 {
+    private final String[] createStatement = {
+            """
+            CREATE TABLE IF NOT EXISTS auths (
+            authToken varchar(256) NOT NULL,
+            username varchar(256) NOT NULL,
+            PRIMARY KEY (authToken)
+            )
+            """
+    };
+
     public MySQLAuthDAO()
     {
-        initializeTableDB();
+        DatabaseManager.initializeTable(createStatement);
     }
 
     @Override
@@ -109,42 +119,6 @@ public class MySQLAuthDAO implements AuthDAO
         } catch (SQLException e)
         {
             System.out.println("NOTICE: " + e.getMessage());
-        } catch (DataAccessException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    private final String[] createStatement = {
-            """
-            CREATE TABLE IF NOT EXISTS auths (
-            authToken varchar(256) NOT NULL,
-            username varchar(256) NOT NULL,
-            PRIMARY KEY (authToken)
-            )
-            """
-    };
-
-    private void initializeTableDB()
-    {
-        try
-        {
-            DatabaseManager.createDatabase();
-
-            try (Connection conn = DatabaseManager.getConnection())
-            {
-                for (String statement : createStatement)
-                {
-                    try (var preparedStatement = conn.prepareStatement(statement))
-                    {
-                        preparedStatement.executeUpdate();
-                    }
-                }
-            }
-        } catch (SQLException e)
-        {
-            throw new RuntimeException(e);
         } catch (DataAccessException e)
         {
             throw new RuntimeException(e);
