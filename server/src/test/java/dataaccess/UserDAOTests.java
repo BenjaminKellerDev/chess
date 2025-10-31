@@ -44,9 +44,11 @@ public class UserDAOTests extends BaseDAOTests
     public void getUserTest()
     {
         UserData newUser = new UserData("newUsername", "super cool password", "email@example.com");
+        UserData diffUser = new UserData("different", "different password", "diffrent@example.com");
         assertNull(userDAO.getUser(newUser.username()));
         userDAO.createUser(newUser);
         assertNotNull(userDAO.getUser(newUser.username()));
+        assertNull(userDAO.getUser(diffUser.username()));
     }
 
     @Test
