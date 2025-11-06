@@ -25,6 +25,10 @@ public class ServerFacade {
 
     }
 
+    public int createGame(CreateGameRequest createGameRequest, String authToken) {
+        return 0;
+    }
+
     public List<GameData> listGames(String authorizationToken) {
         return null;
     }

@@ -1,6 +1,9 @@
 package client;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
+import datamodel.CreateGameRequest;
+import datamodel.JoinGameRequest;
 import datamodel.LoginRequest;
 import datamodel.LogoutRequest;
 import model.*;
@@ -85,12 +88,51 @@ public class ServerFacadeTests {
         assertThrows(DataAccessException.class, () -> facade.logout(new LogoutRequest("bad auth token sajkdfhsjhdf")));
     }
 
+    @Test
+    void createGameValid() throws Exception {
+        AuthData authData = registerTestUser();
+        assertDoesNotThrow(() -> createGame(authData.authToken()));
+    }
+
+    @Test
+    void createGameInvalid() throws Exception {
+        assertThrows(DataAccessException.class, () -> createGame("bad auth token askdjfksajd"));
+    }
+
+    @Test
+    void joinGameTest() throws Exception {
+        AuthData authData = registerTestUser();
+        int gameID = createGame(authData.authToken());
+        assertDoesNotThrow(() -> facade.joinGame(new JoinGameRequest(authData.authToken(), ChessGame.TeamColor.WHITE, gameID)));
+    }
+
+    @Test
+    void joinGameInvalid() throws Exception {
+        assertThrows(DataAccessException.class, () -> facade.joinGame(new JoinGameRequest("bad auth token", ChessGame.TeamColor.WHITE, 39847)));
+    }
+
+    @Test
+    void listGamesSuccess() throws Exception {
+        AuthData authData = registerTestUser();
+        int gameID = createGame(authData.authToken());
+        assertEquals(1, facade.listGames(authData.authToken()).size());
+    }
+
+    @Test
+    void listGamesInvalid() throws Exception {
+        assertThrows(DataAccessException.class, () -> facade.listGames("INVALID AUTH"));
+    }
+
     //helper functions and vars
     private static UserData testUser = new UserData("player1", "password", "p1@email.com");
     private static UserData testUser2 = new UserData("player2", "password2", "p2@email.com");
 
-    AuthData registerTestUser() throws Exception {
+    private AuthData registerTestUser() throws Exception {
         return facade.register(testUser.username(), testUser.password(), testUser.email());
+    }
+
+    private int createGame(String authToken) throws Exception {
+        return facade.createGame(new CreateGameRequest("MyGame"), authToken);
     }
 
 }
