@@ -128,7 +128,7 @@ public class ServerFacadeTests {
     private static UserData testUser2 = new UserData("player2", "password2", "p2@email.com");
 
     private AuthData registerTestUser() throws Exception {
-        return facade.register(testUser.username(), testUser.password(), testUser.email());
+        return facade.register(new UserData(testUser.username(), testUser.password(), testUser.email()));
     }
 
     private int createGame(String authToken) throws Exception {
