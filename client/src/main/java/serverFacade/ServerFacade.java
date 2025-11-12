@@ -21,43 +21,20 @@ public class ServerFacade {
     }
 
     public void dropDatabase() throws DataAccessException {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(serverUrl + "/db"))
-                    .DELETE()
-                    .build();
-            send(client, request, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Bad URI syntax: " + e);
-        }
+        //ask prof if there is a better way to do bodyJSON
+        httpHandler(HttpMethod.DELETE,"/db", null,null);
     }
 
     public AuthData register(UserData registerRequest) throws DataAccessException {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(serverUrl + "/user"))
-                    .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(registerRequest)))
-                    .build();
-            return send(client, request, AuthData.class);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Bad URI syntax: " + e);
-        }
+       return httpHandler(HttpMethod.POST,"/user",SERIALIZER.toJson(registerRequest),AuthData.class);
     }
 
     public AuthData login(LoginRequest loginRequest) throws DataAccessException {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(serverUrl + "/session"))
-                    .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(loginRequest)))
-                    .build();
-            return send(client, request, AuthData.class);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Bad URI syntax: " + e);
-        }
+       return httpHandler(HttpMethod.POST,"/session",SERIALIZER.toJson(loginRequest),AuthData.class);
     }
 
     public void logout(LogoutRequest logoutRequest) throws DataAccessException {
-
+       httpHandler(HttpMethod.POST,"/session",SERIALIZER.toJson(logoutRequest),null);
     }
 
     public int createGame(CreateGameRequest createGameRequest, String authToken) throws DataAccessException {
@@ -70,6 +47,36 @@ public class ServerFacade {
 
     public int joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
         return 0;
+    }
+
+    private enum HttpMethod {
+        GET, POST, PUT, DELETE
+    }
+
+    private <T> T httpHandler(HttpMethod method, String path, String bodyJSON, Class<T> returnType) throws DataAccessException {
+        try {
+           HttpRequest.Builder builder = HttpRequest.newBuilder().uri(new URI(serverUrl + path));
+            switch(method) {
+                case GET:
+                    builder.GET()
+                    break;
+                case POST:
+                    builder.POST(HttpRequest.BodyPublishers.ofString(bodyJSON));
+                    break;
+                case PUT:
+                    builder.PUT()
+                    break;
+                case DELETE:
+                    builder.DELETE();
+                    break;
+                default:
+
+            }
+            HttpRequest request =  builder.build();
+            return send(client, request, returnType);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Bad URI syntax: " + e);
+        }
     }
 
     private static <T> T send(HttpClient client, HttpRequest request, Class<T> returnType) throws DataAccessException {
