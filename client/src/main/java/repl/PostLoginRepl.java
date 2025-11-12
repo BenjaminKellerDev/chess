@@ -18,10 +18,13 @@ import static ui.EscapeSequences.*;
 
 public class PostLoginRepl extends Repl {
     private static ServerFacade facade;
+    private final String serverURL;
+
     private AuthData myAuthData;
     private Map<String, Integer> listIntToGameID = new HashMap<>();
 
     public PostLoginRepl(String serverURL, AuthData authData) {
+        this.serverURL = serverURL;
         facade = new ServerFacade(serverURL);
         myAuthData = authData;
     }
@@ -62,9 +65,9 @@ public class PostLoginRepl extends Repl {
         return SET_TEXT_COLOR_WHITE + """
                 To logout                   -- "logout"
                 To list available games     -- "list", "l"
-                To create a new game        -- "create", "c"
-                To join a game              -- "join", "j"
-                To spectate a game          -- "observe", "o"
+                To create a new game        -- "create", "c" <game name>
+                To join a game              -- "join", "j" <game number> <white/black>
+                To spectate a game          -- "observe", "o" <game number>
                 To display this menu        -- "help", "h"
                 """ + getAwaitUserInputText();
     }
@@ -105,19 +108,22 @@ public class PostLoginRepl extends Repl {
         if (params.length != 2 || !listIntToGameID.containsKey(params[0]))
             throw new DataAccessException("Invalid");
         int gameID = listIntToGameID.get(params[0]);
-        if (params[1].toLowerCase().equals("white"))
+        if (params[1].toLowerCase().equals("white")) {
             facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.WHITE, gameID));
-        else if (params[1].toLowerCase().equals("black"))
-            facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.Black, gameID));
-        else
+            new GameRepl(serverURL, ChessGame.TeamColor.WHITE).run();
+        } else if (params[1].toLowerCase().equals("black")) {
+            facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.BLACK, gameID));
+            new GameRepl(serverURL, ChessGame.TeamColor.BLACK).run();
+        } else
             throw new DataAccessException("Invalid");
         return getAwaitUserInputText();
     }
 
     private String observeGame(String[] params) throws DataAccessException {
-        if (params.length != 2)
+        if (params.length != 1)
             throw new DataAccessException("Invalid");
-        return "";
+
+        return "To be implemented with websocket\n" + getAwaitUserInputText();
     }
 
 
