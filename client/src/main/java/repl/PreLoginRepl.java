@@ -63,7 +63,7 @@ public class PreLoginRepl extends Repl {
     }
 
     private String login(String[] params) throws DataAccessException {
-        if (params.length < 2)
+        if (params.length != 2)
             throw new DataAccessException("Invalid");
         AuthData authData = facade.login(new LoginRequest(params[0], params[1]));
         new PostLoginRepl(serverURL, authData).run();
@@ -71,7 +71,7 @@ public class PreLoginRepl extends Repl {
     }
 
     private String register(String[] params) throws DataAccessException {
-        if (params.length < 3)
+        if (params.length != 3)
             throw new DataAccessException("Invalid");
         AuthData authData = facade.register(new UserData(params[0], params[1], params[2]));
         new PostLoginRepl(serverURL, authData).run();
