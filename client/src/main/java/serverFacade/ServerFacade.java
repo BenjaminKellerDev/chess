@@ -83,7 +83,7 @@ public class ServerFacade {
 
     private URI uriBuilder(String path) {
         try {
-            return new URI(serverUrl + "/session");
+            return new URI(serverUrl + path);
         } catch (URISyntaxException e) {
             throw new RuntimeException("Bad URI syntax: " + e);
         }
