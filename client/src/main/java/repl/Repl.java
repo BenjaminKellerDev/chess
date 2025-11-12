@@ -9,11 +9,11 @@ import static ui.EscapeSequences.*;
 
 public abstract class Repl {
 
-    private static ServerFacade facade;
-
     protected abstract String getAwaitUserInputText();
 
     protected abstract String getFirstMessageText();
+
+    protected abstract String getEscapePhrase();
 
     public void run() {
         System.out.print(getFirstMessageText());
@@ -21,7 +21,7 @@ public abstract class Repl {
         Scanner scanner = new Scanner(System.in);
         String result = "";
 
-        while (!result.equals("quit")) {
+        while (!result.equals(getEscapePhrase())) {
             String line = scanner.nextLine();
             try {
                 result = eval(line);

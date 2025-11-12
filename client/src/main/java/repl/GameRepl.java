@@ -25,6 +25,11 @@ public class GameRepl extends Repl {
     }
 
     @Override
+    protected String getEscapePhrase() {
+        return SET_TEXT_BLINKING + "quiting game...";
+    }
+
+    @Override
     protected String eval(String input) throws DataAccessException {
         return "g\n" + getAwaitUserInputText();
     }

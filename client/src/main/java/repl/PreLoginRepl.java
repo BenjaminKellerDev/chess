@@ -33,6 +33,11 @@ public class PreLoginRepl extends Repl {
         return "♕ 240 Chess Client:\n" + getAwaitUserInputText();
     }
 
+    @Override
+    protected String getEscapePhrase() {
+        return SET_TEXT_BLINKING + "quiting...";
+    }
+
 
     @Override
     public String eval(String input) throws DataAccessException {
@@ -40,7 +45,7 @@ public class PreLoginRepl extends Repl {
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (command) {
-            case "quit", "q" -> "quiting...";
+            case "quit", "q" -> getEscapePhrase();
             case "help", "h" -> help();
             case "login", "l" -> login(params);
             case "register", "r" -> register(params);
