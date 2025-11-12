@@ -1,5 +1,8 @@
 package client;
 
+import dataaccess.DataAccessException;
+import datamodel.LoginRequest;
+import model.AuthData;
 import serverFacade.ServerFacade;
 import ui.EscapeSequences;
 
@@ -20,8 +23,8 @@ public class PreLoginClient implements Client {
         return switch (command) {
             case "quit", "q" -> "quit";
             case "help", "h" -> help();
-            case "login", "l" -> login();
-            case "register", "r" -> register();
+            case "login", "l" -> login(params);
+            case "register", "r" -> register(params);
             default -> "Invalid command, try command \"help\"";
         };
     }
@@ -35,11 +38,19 @@ public class PreLoginClient implements Client {
                 Chess Login >>>""";
     }
 
-    private static String login() {
+    private static String login(String[] params) {
+        try {
+            AuthData authData = facade.login(new LoginRequest(params[0], params[1]));
+
+        } catch (DataAccessException e) {
+            return EscapeSequences.SET_TEXT_COLOR_RED + """
+                    Invalid
+                    Chess Login >>>""";
+        }
         return EscapeSequences.SET_TEXT_COLOR_BLUE + "";
     }
 
-    private static String register() {
+    private static String register(String[] params) {
         return EscapeSequences.SET_TEXT_COLOR_BLUE + "";
     }
 }

@@ -18,8 +18,8 @@ public class Repl {
 
     public Repl(String serverURL) {
         preLoginClient = new PreLoginClient(serverURL);
-        postLoginClient = new PreLoginClient(serverURL);
-        gameClient = new PreLoginClient(serverURL);
+        postLoginClient = new PostLoginClient(serverURL);
+        gameClient = new GameClient(serverURL);
         currentReplState = state.preLogin;
     }
 
@@ -52,7 +52,6 @@ public class Repl {
                 currentReplState = state.postLogin;
             else if (result.contains("Chess Game >>>"))
                 currentReplState = state.game;
-
         }
     }
 
