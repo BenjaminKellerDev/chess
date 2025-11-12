@@ -6,39 +6,27 @@ import serverFacade.ServerFacade;
 
 import static ui.EscapeSequences.*;
 
-import java.util.Scanner;
-
-
-public class PostLoginRepl {
+public class PostLoginRepl extends Repl {
     private static ServerFacade facade;
     private AuthData myAuthData;
-    private final String awaitUserInputText = SET_TEXT_COLOR_LIGHT_GREY +
-            SET_TEXT_FAINT + "Chess >>>" + RESET_TEXT_BOLD_FAINT;
-    private final String firstMessageText = SET_TEXT_COLOR_GREEN + "Success!!\n" + awaitUserInputText;
 
     public PostLoginRepl(String serverURL, AuthData authData) {
         facade = new ServerFacade(serverURL);
         myAuthData = authData;
     }
 
-    public void run() {
-        System.out.print(firstMessageText);
-
-        Scanner scanner = new Scanner(System.in);
-        String result = "";
-
-        while (!result.equals("quit")) {
-            String line = scanner.nextLine();
-            try {
-                result = eval(line);
-                System.out.print(result);
-            } catch (DataAccessException e) {
-                System.out.print(SET_TEXT_COLOR_RED + "Invalid\n"
-                        + awaitUserInputText);
-            }
-        }
+    @Override
+    protected String getAwaitUserInputText() {
+        return SET_TEXT_COLOR_LIGHT_GREY + SET_TEXT_FAINT
+                + "Chess >>>" + RESET_TEXT_BOLD_FAINT + SET_TEXT_COLOR_WHITE;
     }
 
+    @Override
+    protected String getFirstMessageText() {
+        return SET_TEXT_COLOR_GREEN + "Success!!\n" + getAwaitUserInputText();
+    }
+
+    @Override
     public String eval(String input) throws DataAccessException {
         return "x";
     }

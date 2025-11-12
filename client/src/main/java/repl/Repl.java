@@ -6,7 +6,6 @@ import serverFacade.ServerFacade;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.RESET_TEXT_BOLD_FAINT;
 
 public abstract class Repl {
 
@@ -34,7 +33,5 @@ public abstract class Repl {
         }
     }
 
-    public String eval(String input) throws DataAccessException {
-        return "x\n" + getAwaitUserInputText();
-    }
+    protected abstract String eval(String input) throws DataAccessException;
 }
