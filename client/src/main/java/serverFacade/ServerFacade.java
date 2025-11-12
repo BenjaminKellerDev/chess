@@ -21,55 +21,72 @@ public class ServerFacade {
     }
 
     public void dropDatabase() throws DataAccessException {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(serverUrl + "/db"))
-                    .DELETE()
-                    .build();
-            send(client, request, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Bad URI syntax: " + e);
-        }
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriBuilder("/db"))
+                .DELETE()
+                .build();
+        send(client, request, null);
     }
 
     public AuthData register(UserData registerRequest) throws DataAccessException {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(serverUrl + "/user"))
-                    .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(registerRequest)))
-                    .build();
-            return send(client, request, AuthData.class);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Bad URI syntax: " + e);
-        }
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriBuilder("/user"))
+                .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(registerRequest)))
+                .build();
+        return send(client, request, AuthData.class);
     }
 
     public AuthData login(LoginRequest loginRequest) throws DataAccessException {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(serverUrl + "/session"))
-                    .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(loginRequest)))
-                    .build();
-            return send(client, request, AuthData.class);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Bad URI syntax: " + e);
-        }
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriBuilder("/session"))
+                .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(loginRequest)))
+                .build();
+        return send(client, request, AuthData.class);
     }
 
     public void logout(LogoutRequest logoutRequest) throws DataAccessException {
-
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriBuilder("/session"))
+                .DELETE()
+                .header("Authorization", logoutRequest.authToken())
+                .build();
+        send(client, request, null);
     }
 
     public int createGame(CreateGameRequest createGameRequest, String authToken) throws DataAccessException {
-        return 0;
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriBuilder("/game"))
+                .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(createGameRequest)))
+                .header("Authorization", authToken)
+                .build();
+        return send(client, request, CreateGameResponce.class).gameID();
     }
 
-    public List<GameData> listGames(String authorizationToken) throws DataAccessException {
-        return null;
+    public List<GameData> listGames(String authToken) throws DataAccessException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriBuilder("/game"))
+                .GET()
+                .header("Authorization", authToken)
+                .build();
+        return send(client, request, ListGamesResponse.class).games();
     }
 
-    public int joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
-        return 0;
+    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriBuilder("/game"))
+                //authToken is redundant here but won't hurt
+                .PUT(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(joinGameRequest)))
+                .header("Authorization", joinGameRequest.authToken())
+                .build();
+        send(client, request, null);
+    }
+
+    private URI uriBuilder(String path) {
+        try {
+            return new URI(serverUrl + "/session");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Bad URI syntax: " + e);
+        }
     }
 
     private static <T> T send(HttpClient client, HttpRequest request, Class<T> returnType) throws DataAccessException {
