@@ -1,28 +1,23 @@
 package repl;
 
 import dataaccess.DataAccessException;
-import model.AuthData;
 import serverFacade.ServerFacade;
-
-import static ui.EscapeSequences.*;
 
 import java.util.Scanner;
 
+import static ui.EscapeSequences.*;
+import static ui.EscapeSequences.RESET_TEXT_BOLD_FAINT;
 
-public class PostLoginRepl {
+public abstract class Repl {
+
     private static ServerFacade facade;
-    private AuthData myAuthData;
-    private final String awaitUserInputText = SET_TEXT_COLOR_LIGHT_GREY +
-            SET_TEXT_FAINT + "Chess >>>" + RESET_TEXT_BOLD_FAINT;
-    private final String firstMessageText = SET_TEXT_COLOR_GREEN + "Success!!\n" + awaitUserInputText;
 
-    public PostLoginRepl(String serverURL, AuthData authData) {
-        facade = new ServerFacade(serverURL);
-        myAuthData = authData;
-    }
+    protected abstract String getAwaitUserInputText();
+
+    protected abstract String getFirstMessageText();
 
     public void run() {
-        System.out.print(firstMessageText);
+        System.out.print(getFirstMessageText());
 
         Scanner scanner = new Scanner(System.in);
         String result = "";
@@ -34,12 +29,12 @@ public class PostLoginRepl {
                 System.out.print(result);
             } catch (DataAccessException e) {
                 System.out.print(SET_TEXT_COLOR_RED + "Invalid\n"
-                        + awaitUserInputText);
+                        + getAwaitUserInputText());
             }
         }
     }
 
     public String eval(String input) throws DataAccessException {
-        return "x";
+        return "x\n" + getAwaitUserInputText();
     }
 }

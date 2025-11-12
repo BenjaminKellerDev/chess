@@ -1,4 +1,4 @@
-import repl.preLoginRepl;
+import repl.PreLoginRepl;
 
 public class Main {
 
@@ -6,6 +6,6 @@ public class Main {
         String serverURL = "http://localhost:8080";
         if (args.length == 1)
             serverURL = args[0];
-        new preLoginRepl(serverURL).run();
+        new PreLoginRepl(serverURL).run();
     }
 }
