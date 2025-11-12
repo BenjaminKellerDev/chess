@@ -16,8 +16,8 @@ public class ServerFacade {
     private final String serverUrl;
     private static final Gson SERIALIZER = new Gson();
 
-    public ServerFacade(int port) {
-        serverUrl = "http://localhost:" + port;
+    public ServerFacade(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
     public void dropDatabase() throws DataAccessException {
@@ -85,7 +85,7 @@ public class ServerFacade {
         try {
             return new URI(serverUrl + path);
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Bad URI syntax: " + e);
+            throw new RuntimeException("Bad URI syntax: " + e); //could be a DataAccessException
         }
     }
 
