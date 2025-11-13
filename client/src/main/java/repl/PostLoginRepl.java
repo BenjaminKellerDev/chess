@@ -1,7 +1,7 @@
 package repl;
 
 import chess.ChessGame;
-import dataaccess.DataAccessException;
+import serverAccess.ServerAccessException;
 import datamodel.CreateGameRequest;
 import datamodel.JoinGameRequest;
 import datamodel.LogoutRequest;
@@ -46,7 +46,7 @@ public class PostLoginRepl extends Repl {
     }
 
     @Override
-    public String eval(String input) throws DataAccessException {
+    public String eval(String input) throws ServerAccessException {
         String[] tokens = input.toLowerCase().split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -72,20 +72,20 @@ public class PostLoginRepl extends Repl {
                 """ + getAwaitUserInputText();
     }
 
-    private String logout() throws DataAccessException {
+    private String logout() throws ServerAccessException {
         facade.logout(new LogoutRequest(myAuthData.authToken()));
         return getEscapePhrase();
     }
 
 
-    private String createGame(String[] params) throws DataAccessException {
+    private String createGame(String[] params) throws ServerAccessException {
         if (params.length != 1)
-            throw new DataAccessException("Invalid");
+            throw new ServerAccessException("Invalid");
         facade.createGame(new CreateGameRequest(params[0]), myAuthData.authToken());
         return getAwaitUserInputText();
     }
 
-    private String listGames() throws DataAccessException {
+    private String listGames() throws ServerAccessException {
         List<GameData> games = facade.listGames(myAuthData.authToken());
         listIntToGameID.clear();
         StringBuilder sb = new StringBuilder("Games:\n");
@@ -104,9 +104,9 @@ public class PostLoginRepl extends Repl {
         return sb.toString();
     }
 
-    private String joinGame(String[] params) throws DataAccessException {
+    private String joinGame(String[] params) throws ServerAccessException {
         if (params.length != 2 || !listIntToGameID.containsKey(params[0]))
-            throw new DataAccessException("Invalid");
+            throw new ServerAccessException("Invalid");
         int gameID = listIntToGameID.get(params[0]);
         if (params[1].toLowerCase().equals("white")) {
             facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.WHITE, gameID));
@@ -115,13 +115,13 @@ public class PostLoginRepl extends Repl {
             facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.BLACK, gameID));
             new GameRepl(serverURL, ChessGame.TeamColor.BLACK).run();
         } else
-            throw new DataAccessException("Invalid");
+            throw new ServerAccessException("Invalid");
         return getAwaitUserInputText();
     }
 
-    private String observeGame(String[] params) throws DataAccessException {
+    private String observeGame(String[] params) throws ServerAccessException {
         if (params.length != 1)
-            throw new DataAccessException("Invalid");
+            throw new ServerAccessException("Invalid");
 
         new GameRepl(serverURL, ChessGame.TeamColor.WHITE).run();
         return getAwaitUserInputText();

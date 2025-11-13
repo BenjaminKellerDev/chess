@@ -4,7 +4,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import dataaccess.DataAccessException;
+import serverAccess.ServerAccessException;
 import serverFacade.ServerFacade;
 
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class GameRepl extends Repl {
     }
 
     @Override
-    protected String eval(String input) throws DataAccessException {
+    protected String eval(String input) throws ServerAccessException {
         String[] tokens = input.toLowerCase().split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);

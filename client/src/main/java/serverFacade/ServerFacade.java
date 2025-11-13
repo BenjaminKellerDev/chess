@@ -1,11 +1,10 @@
 package serverFacade;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
+import serverAccess.ServerAccessException;
 import datamodel.*;
 import model.*;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.*;
@@ -20,7 +19,7 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    public void dropDatabase() throws DataAccessException {
+    public void dropDatabase() throws ServerAccessException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriBuilder("/db"))
                 .DELETE()
@@ -28,7 +27,7 @@ public class ServerFacade {
         send(client, request, null);
     }
 
-    public AuthData register(UserData registerRequest) throws DataAccessException {
+    public AuthData register(UserData registerRequest) throws ServerAccessException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriBuilder("/user"))
                 .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(registerRequest)))
@@ -36,7 +35,7 @@ public class ServerFacade {
         return send(client, request, AuthData.class);
     }
 
-    public AuthData login(LoginRequest loginRequest) throws DataAccessException {
+    public AuthData login(LoginRequest loginRequest) throws ServerAccessException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriBuilder("/session"))
                 .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(loginRequest)))
@@ -44,7 +43,7 @@ public class ServerFacade {
         return send(client, request, AuthData.class);
     }
 
-    public void logout(LogoutRequest logoutRequest) throws DataAccessException {
+    public void logout(LogoutRequest logoutRequest) throws ServerAccessException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriBuilder("/session"))
                 .DELETE()
@@ -53,7 +52,7 @@ public class ServerFacade {
         send(client, request, null);
     }
 
-    public int createGame(CreateGameRequest createGameRequest, String authToken) throws DataAccessException {
+    public int createGame(CreateGameRequest createGameRequest, String authToken) throws ServerAccessException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriBuilder("/game"))
                 .POST(HttpRequest.BodyPublishers.ofString(SERIALIZER.toJson(createGameRequest)))
@@ -62,7 +61,7 @@ public class ServerFacade {
         return send(client, request, CreateGameResponce.class).gameID();
     }
 
-    public List<GameData> listGames(String authToken) throws DataAccessException {
+    public List<GameData> listGames(String authToken) throws ServerAccessException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriBuilder("/game"))
                 .GET()
@@ -71,7 +70,7 @@ public class ServerFacade {
         return send(client, request, ListGamesResponse.class).games();
     }
 
-    public void joinGame(JoinGameRequest joinGameRequest) throws DataAccessException {
+    public void joinGame(JoinGameRequest joinGameRequest) throws ServerAccessException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriBuilder("/game"))
                 //authToken is redundant here but won't hurt
@@ -89,17 +88,17 @@ public class ServerFacade {
         }
     }
 
-    private static <T> T send(HttpClient client, HttpRequest request, Class<T> returnType) throws DataAccessException {
+    private static <T> T send(HttpClient client, HttpRequest request, Class<T> returnType) throws ServerAccessException {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200)
-                throw new DataAccessException("Server facade HttpSned error code: " + response.statusCode() + ": " + response.body());
+                throw new ServerAccessException("Server facade HttpSned error code: " + response.statusCode() + ": " + response.body());
             else if (returnType != null) {
                 T returnObj = SERIALIZER.fromJson(response.body(), returnType);
                 return returnObj;
             }
         } catch (Exception e) {
-            throw new DataAccessException("Server facade HttpSned: " + e.getMessage());
+            throw new ServerAccessException("Server facade HttpSned: " + e.getMessage());
         }
         return null;
     }

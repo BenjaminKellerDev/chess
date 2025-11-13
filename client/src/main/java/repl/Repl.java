@@ -1,7 +1,6 @@
 package repl;
 
-import dataaccess.DataAccessException;
-import serverFacade.ServerFacade;
+import serverAccess.ServerAccessException;
 
 import java.util.Scanner;
 
@@ -26,12 +25,12 @@ public abstract class Repl {
             try {
                 result = eval(line);
                 System.out.print(result);
-            } catch (DataAccessException e) {
+            } catch (ServerAccessException e) {
                 System.out.print(SET_TEXT_COLOR_RED + "Invalid\n"
                         + getAwaitUserInputText());
             }
         }
     }
 
-    protected abstract String eval(String input) throws DataAccessException;
+    protected abstract String eval(String input) throws ServerAccessException;
 }

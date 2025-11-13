@@ -1,7 +1,7 @@
 package client;
 
 import chess.ChessGame;
-import dataaccess.DataAccessException;
+import serverAccess.ServerAccessException;
 import datamodel.CreateGameRequest;
 import datamodel.JoinGameRequest;
 import datamodel.LoginRequest;
@@ -42,13 +42,13 @@ public class ServerFacadeTests {
         AuthData authData = registerTestUser();
         assertDoesNotThrow(() -> facade.login(new LoginRequest(testUser.username(), testUser.password())));
         facade.dropDatabase();
-        assertThrows(DataAccessException.class, () -> facade.login(new LoginRequest(testUser.username(), testUser.password())));
+        assertThrows(ServerAccessException.class, () -> facade.login(new LoginRequest(testUser.username(), testUser.password())));
     }
 
     @Test
     void dropDatabaseTestNegative() throws Exception {
         facade.dropDatabase();
-        assertThrows(DataAccessException.class, () -> facade.login(new LoginRequest(testUser.username(), testUser.password())));
+        assertThrows(ServerAccessException.class, () -> facade.login(new LoginRequest(testUser.username(), testUser.password())));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ServerFacadeTests {
     @Test
     void registerTwice() throws Exception {
         registerTestUser();
-        assertThrows(DataAccessException.class, () -> registerTestUser());
+        assertThrows(ServerAccessException.class, () -> registerTestUser());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ServerFacadeTests {
     @Test
     void loginBad() throws Exception {
         registerTestUser();
-        assertThrows(DataAccessException.class, () -> facade.login(new LoginRequest(testUser2.username(), testUser2.password())));
+        assertThrows(ServerAccessException.class, () -> facade.login(new LoginRequest(testUser2.username(), testUser2.password())));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ServerFacadeTests {
     @Test
     void logoutBad() throws Exception {
         registerTestUser();
-        assertThrows(DataAccessException.class, () -> facade.logout(new LogoutRequest("bad auth token sajkdfhsjhdf")));
+        assertThrows(ServerAccessException.class, () -> facade.logout(new LogoutRequest("bad auth token sajkdfhsjhdf")));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ServerFacadeTests {
 
     @Test
     void createGameInvalid() throws Exception {
-        assertThrows(DataAccessException.class, () -> createGame("bad auth token askdjfksajd"));
+        assertThrows(ServerAccessException.class, () -> createGame("bad auth token askdjfksajd"));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ServerFacadeTests {
 
     @Test
     void joinGameInvalid() throws Exception {
-        assertThrows(DataAccessException.class, () -> facade.joinGame(new JoinGameRequest("bad auth token", ChessGame.TeamColor.WHITE, 39847)));
+        assertThrows(ServerAccessException.class, () -> facade.joinGame(new JoinGameRequest("bad auth token", ChessGame.TeamColor.WHITE, 39847)));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class ServerFacadeTests {
 
     @Test
     void listGamesInvalid() throws Exception {
-        assertThrows(DataAccessException.class, () -> facade.listGames("INVALID AUTH"));
+        assertThrows(ServerAccessException.class, () -> facade.listGames("INVALID AUTH"));
     }
 
     //helper functions and vars

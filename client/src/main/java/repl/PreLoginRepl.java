@@ -1,6 +1,6 @@
 package repl;
 
-import dataaccess.DataAccessException;
+import serverAccess.ServerAccessException;
 import datamodel.LoginRequest;
 import model.AuthData;
 import model.UserData;
@@ -40,7 +40,7 @@ public class PreLoginRepl extends Repl {
 
 
     @Override
-    public String eval(String input) throws DataAccessException {
+    public String eval(String input) throws ServerAccessException {
         String[] tokens = input.toLowerCase().split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -62,17 +62,17 @@ public class PreLoginRepl extends Repl {
                 """ + getAwaitUserInputText();
     }
 
-    private String login(String[] params) throws DataAccessException {
+    private String login(String[] params) throws ServerAccessException {
         if (params.length != 2)
-            throw new DataAccessException("Invalid");
+            throw new ServerAccessException("Invalid");
         AuthData authData = facade.login(new LoginRequest(params[0], params[1]));
         new PostLoginRepl(serverURL, authData).run();
         return getAwaitUserInputText();
     }
 
-    private String register(String[] params) throws DataAccessException {
+    private String register(String[] params) throws ServerAccessException {
         if (params.length != 3)
-            throw new DataAccessException("Invalid");
+            throw new ServerAccessException("Invalid");
         AuthData authData = facade.register(new UserData(params[0], params[1], params[2]));
         new PostLoginRepl(serverURL, authData).run();
         return getAwaitUserInputText();
