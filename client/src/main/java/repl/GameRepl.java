@@ -31,7 +31,12 @@ public class GameRepl extends Repl {
     protected String getFirstMessageText() {
         ChessBoard cb = new ChessBoard();
         cb.resetBoard();
-        return SET_TEXT_COLOR_GREEN + "Entered Game\n" + buildBoard(cb) + getAwaitUserInputText();
+        boolean showBlack;
+        if (teamColor == ChessGame.TeamColor.BLACK)
+            showBlack = true;
+        else
+            showBlack = false;
+        return SET_TEXT_COLOR_GREEN + "Entered Game\n" + buildBoard(cb, showBlack) + getAwaitUserInputText();
     }
 
     @Override
@@ -58,52 +63,73 @@ public class GameRepl extends Repl {
                 """ + getAwaitUserInputText();
     }
 
-    public static String buildBoard(ChessBoard chessBoard) {
+    public static String buildBoard(ChessBoard chessBoard, boolean blackSide) {
         StringBuilder sb = new StringBuilder();
-        sb.append(SET_TEXT_BOLD);
+        sb.append(SET_TEXT_BOLD + RESET_TEXT_COLOR);
         boolean white = false;
-        for (int i = 9; i >= 0; i--) {
-            for (int j = 0; j <= 9; j++) {
-                if (i == 0 || i == 9 || j == 0 || j == 9) { //boarder
-                    sb.append(SET_BG_COLOR_LIGHT_GREY);
-                    if ((j == 0 || j == 9) && i != 0 && i != 9)
-                        sb.append(" " + i + " ");
-                    else if ((i == 0 || i == 9) && j != 0 && j != 9)
-                        sb.append(" " + (char) ('a' + j - 1) + " ");
-                    else
-                        sb.append(EMPTY);
-                } else {
-                    if (white) {
-                        sb.append(SET_BG_COLOR_WHITE);
-                    } else {
-                        sb.append(SET_BG_COLOR_BLACK);
-                    }
-                    white = !white;
+        if (!blackSide) {
+            for (int i = 9; i >= 0; i--) {
+                for (int j = 0; j <= 9; j++) {
                     ChessPiece chessPiece = chessBoard.getPiece(new ChessPosition(i, j));
-                    if (chessPiece != null) {
-                        if (chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                            sb.append(SET_TEXT_COLOR_RED);
-                        } else {
-                            sb.append(SET_TEXT_COLOR_BLUE);
-                        }
-                        switch (chessPiece.getPieceType()) {
-                            case PAWN -> sb.append(" P ");
-                            case ROOK -> sb.append(" R ");
-                            case QUEEN -> sb.append(" Q ");
-                            case KNIGHT -> sb.append(" N ");
-                            case BISHOP -> sb.append(" B ");
-                            case KING -> sb.append(" K ");
-                        }
-                    } else {
-                        sb.append(EMPTY);
-                    }
-                    sb.append(RESET_TEXT_COLOR);
+                    white = !white;
+                    sb.append(buildBoardHelper(i, j, chessPiece, white));
                 }
+                sb.append(RESET_BG_COLOR + RESET_TEXT_COLOR + '\n');
+                white = !white;
             }
-            sb.append(RESET_BG_COLOR + RESET_TEXT_COLOR + '\n');
-            white = !white;
+        } else {
+            for (int i = 0; i <= 9; i++) {
+                for (int j = 9; j >= 0; j--) {
+                    ChessPiece chessPiece = chessBoard.getPiece(new ChessPosition(i, j));
+                    white = !white;
+                    sb.append(buildBoardHelper(i, j, chessPiece, white));
+                }
+                sb.append(RESET_BG_COLOR + RESET_TEXT_COLOR + '\n');
+                white = !white;
+            }
         }
+
         sb.append(RESET_TEXT_BOLD_FAINT);
         return sb.toString();
     }
+
+    private static String buildBoardHelper(int i, int j, ChessPiece chessPiece, boolean white) {
+        StringBuilder sb = new StringBuilder();
+        if (i == 0 || i == 9 || j == 0 || j == 9) { //boarder
+            sb.append(SET_BG_COLOR_LIGHT_GREY);
+            if ((j == 0 || j == 9) && i != 0 && i != 9)
+                sb.append(" " + i + " ");
+            else if ((i == 0 || i == 9) && j != 0 && j != 9)
+                sb.append(" " + (char) ('a' + j - 1) + " ");
+            else
+                sb.append(EMPTY);
+        } else {
+            if (white) {
+                sb.append(SET_BG_COLOR_WHITE);
+            } else {
+                sb.append(SET_BG_COLOR_BLACK);
+            }
+            if (chessPiece != null) {
+                if (chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    sb.append(SET_TEXT_COLOR_RED);
+                } else {
+                    sb.append(SET_TEXT_COLOR_BLUE);
+                }
+                switch (chessPiece.getPieceType()) {
+                    case PAWN -> sb.append(" P ");
+                    case ROOK -> sb.append(" R ");
+                    case QUEEN -> sb.append(" Q ");
+                    case KNIGHT -> sb.append(" N ");
+                    case BISHOP -> sb.append(" B ");
+                    case KING -> sb.append(" K ");
+                }
+            } else {
+                sb.append(EMPTY);
+            }
+            sb.append(RESET_TEXT_COLOR);
+        }
+        return sb.toString();
+    }
+
+
 }

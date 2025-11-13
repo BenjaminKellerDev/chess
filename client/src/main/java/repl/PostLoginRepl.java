@@ -123,7 +123,8 @@ public class PostLoginRepl extends Repl {
         if (params.length != 1)
             throw new DataAccessException("Invalid");
 
-        return "To be implemented with websocket\n" + getAwaitUserInputText();
+        new GameRepl(serverURL, ChessGame.TeamColor.WHITE).run();
+        return getAwaitUserInputText();
     }
 
 
