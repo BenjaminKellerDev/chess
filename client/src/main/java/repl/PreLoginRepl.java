@@ -1,10 +1,10 @@
 package repl;
 
-import serverAccess.ServerAccessException;
+import serveraccess.ServerAccessException;
 import datamodel.LoginRequest;
 import model.AuthData;
 import model.UserData;
-import serverFacade.ServerFacade;
+import serverfacade.ServerFacade;
 
 import static ui.EscapeSequences.*;
 
@@ -63,16 +63,18 @@ public class PreLoginRepl extends Repl {
     }
 
     private String login(String[] params) throws ServerAccessException {
-        if (params.length != 2)
+        if (params.length != 2) {
             throw new ServerAccessException("Invalid");
+        }
         AuthData authData = facade.login(new LoginRequest(params[0], params[1]));
         new PostLoginRepl(serverURL, authData).run();
         return getAwaitUserInputText();
     }
 
     private String register(String[] params) throws ServerAccessException {
-        if (params.length != 3)
+        if (params.length != 3) {
             throw new ServerAccessException("Invalid");
+        }
         AuthData authData = facade.register(new UserData(params[0], params[1], params[2]));
         new PostLoginRepl(serverURL, authData).run();
         return getAwaitUserInputText();

@@ -1,6 +1,6 @@
 package repl;
 
-import serverAccess.ServerAccessException;
+import serveraccess.ServerAccessException;
 
 import java.util.Scanner;
 

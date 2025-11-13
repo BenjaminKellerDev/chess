@@ -1,4 +1,4 @@
-package serverAccess;
+package serveraccess;
 
 /**
  * Indicates there was an error connecting to the database

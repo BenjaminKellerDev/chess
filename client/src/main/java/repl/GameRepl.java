@@ -4,8 +4,8 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import serverAccess.ServerAccessException;
-import serverFacade.ServerFacade;
+import serveraccess.ServerAccessException;
+import serverfacade.ServerFacade;
 
 import java.util.Arrays;
 
@@ -32,10 +32,11 @@ public class GameRepl extends Repl {
         ChessBoard cb = new ChessBoard();
         cb.resetBoard();
         boolean showBlack;
-        if (teamColor == ChessGame.TeamColor.BLACK)
+        if (teamColor == ChessGame.TeamColor.BLACK) {
             showBlack = true;
-        else
+        } else {
             showBlack = false;
+        }
         return SET_TEXT_COLOR_GREEN + "Entered Game\n" + buildBoard(cb, showBlack) + getAwaitUserInputText();
     }
 
@@ -97,12 +98,13 @@ public class GameRepl extends Repl {
         StringBuilder sb = new StringBuilder();
         if (i == 0 || i == 9 || j == 0 || j == 9) { //boarder
             sb.append(SET_BG_COLOR_LIGHT_GREY);
-            if ((j == 0 || j == 9) && i != 0 && i != 9)
+            if ((j == 0 || j == 9) && i != 0 && i != 9) {
                 sb.append(" " + i + " ");
-            else if ((i == 0 || i == 9) && j != 0 && j != 9)
+            } else if ((i == 0 || i == 9) && j != 0 && j != 9) {
                 sb.append(" " + (char) ('a' + j - 1) + " ");
-            else
+            } else {
                 sb.append(EMPTY);
+            }
         } else {
             if (white) {
                 sb.append(SET_BG_COLOR_WHITE);

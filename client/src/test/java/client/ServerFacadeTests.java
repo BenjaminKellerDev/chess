@@ -1,7 +1,7 @@
 package client;
 
 import chess.ChessGame;
-import serverAccess.ServerAccessException;
+import serveraccess.ServerAccessException;
 import datamodel.CreateGameRequest;
 import datamodel.JoinGameRequest;
 import datamodel.LoginRequest;
@@ -9,7 +9,7 @@ import datamodel.LogoutRequest;
 import model.*;
 import org.junit.jupiter.api.*;
 import server.Server;
-import serverFacade.ServerFacade;
+import serverfacade.ServerFacade;
 
 import static org.junit.jupiter.api.Assertions.*;
 

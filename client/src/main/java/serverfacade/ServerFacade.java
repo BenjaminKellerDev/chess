@@ -1,7 +1,7 @@
-package serverFacade;
+package serverfacade;
 
 import com.google.gson.Gson;
-import serverAccess.ServerAccessException;
+import serveraccess.ServerAccessException;
 import datamodel.*;
 import model.*;
 
@@ -91,9 +91,9 @@ public class ServerFacade {
     private static <T> T send(HttpClient client, HttpRequest request, Class<T> returnType) throws ServerAccessException {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200)
+            if (response.statusCode() != 200) {
                 throw new ServerAccessException("Server facade HttpSned error code: " + response.statusCode() + ": " + response.body());
-            else if (returnType != null) {
+            } else if (returnType != null) {
                 T returnObj = SERIALIZER.fromJson(response.body(), returnType);
                 return returnObj;
             }

@@ -1,13 +1,13 @@
 package repl;
 
 import chess.ChessGame;
-import serverAccess.ServerAccessException;
+import serveraccess.ServerAccessException;
 import datamodel.CreateGameRequest;
 import datamodel.JoinGameRequest;
 import datamodel.LogoutRequest;
 import model.AuthData;
 import model.GameData;
-import serverFacade.ServerFacade;
+import serverfacade.ServerFacade;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -79,8 +79,9 @@ public class PostLoginRepl extends Repl {
 
 
     private String createGame(String[] params) throws ServerAccessException {
-        if (params.length != 1)
+        if (params.length != 1) {
             throw new ServerAccessException("Invalid");
+        }
         facade.createGame(new CreateGameRequest(params[0]), myAuthData.authToken());
         return getAwaitUserInputText();
     }
@@ -93,10 +94,12 @@ public class PostLoginRepl extends Repl {
             GameData g = games.get(i);
             String w = "available";
             String b = "available";
-            if (g.whiteUsername() != null)
+            if (g.whiteUsername() != null) {
                 w = g.whiteUsername();
-            if (g.blackUsername() != null)
+            }
+            if (g.blackUsername() != null) {
                 b = g.blackUsername();
+            }
             sb.append(String.format("%d: %s, White: %s, Black: %s%n", i + 1, g.gameName(), w, b));
             listIntToGameID.put(Integer.toString(i + 1), g.gameID());
         }
@@ -105,8 +108,9 @@ public class PostLoginRepl extends Repl {
     }
 
     private String joinGame(String[] params) throws ServerAccessException {
-        if (params.length != 2 || !listIntToGameID.containsKey(params[0]))
+        if (params.length != 2 || !listIntToGameID.containsKey(params[0])) {
             throw new ServerAccessException("Invalid");
+        }
         int gameID = listIntToGameID.get(params[0]);
         if (params[1].toLowerCase().equals("white")) {
             facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.WHITE, gameID));
@@ -114,14 +118,16 @@ public class PostLoginRepl extends Repl {
         } else if (params[1].toLowerCase().equals("black")) {
             facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.BLACK, gameID));
             new GameRepl(serverURL, ChessGame.TeamColor.BLACK).run();
-        } else
+        } else {
             throw new ServerAccessException("Invalid");
+        }
         return getAwaitUserInputText();
     }
 
     private String observeGame(String[] params) throws ServerAccessException {
-        if (params.length != 1)
+        if (params.length != 1) {
             throw new ServerAccessException("Invalid");
+        }
 
         new GameRepl(serverURL, ChessGame.TeamColor.WHITE).run();
         return getAwaitUserInputText();
