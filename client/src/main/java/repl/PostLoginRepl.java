@@ -80,7 +80,7 @@ public class PostLoginRepl extends Repl {
 
     private String createGame(String[] params) throws ServerAccessException {
         if (params.length != 1) {
-            throw new ServerAccessException("Invalid");
+            throw new ServerAccessException("Invalid parameter count, see help command");
         }
         facade.createGame(new CreateGameRequest(params[0]), myAuthData.authToken());
         return getAwaitUserInputText();
@@ -108,8 +108,12 @@ public class PostLoginRepl extends Repl {
     }
 
     private String joinGame(String[] params) throws ServerAccessException {
-        if (params.length != 2 || !listIntToGameID.containsKey(params[0])) {
-            throw new ServerAccessException("Invalid");
+        if (params.length != 2) {
+            throw new ServerAccessException("Invalid parameter count, see help command");
+        }
+        if (!listIntToGameID.containsKey(params[0])) {
+
+            throw new ServerAccessException("Invalid game id, see help command");
         }
         int gameID = listIntToGameID.get(params[0]);
         if (params[1].toLowerCase().equals("white")) {
@@ -119,14 +123,18 @@ public class PostLoginRepl extends Repl {
             facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.BLACK, gameID));
             new GameRepl(serverURL, ChessGame.TeamColor.BLACK).run();
         } else {
-            throw new ServerAccessException("Invalid");
+            throw new ServerAccessException("Invalid color");
         }
         return getAwaitUserInputText();
     }
 
     private String observeGame(String[] params) throws ServerAccessException {
         if (params.length != 1) {
-            throw new ServerAccessException("Invalid");
+            throw new ServerAccessException("Invalid parameter count, see help command");
+        }
+        if (!listIntToGameID.containsKey(params[0])) {
+
+            throw new ServerAccessException("Invalid game id, see help command");
         }
 
         new GameRepl(serverURL, ChessGame.TeamColor.WHITE).run();

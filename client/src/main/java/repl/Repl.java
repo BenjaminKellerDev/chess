@@ -26,8 +26,13 @@ public abstract class Repl {
                 result = eval(line);
                 System.out.print(result);
             } catch (ServerAccessException e) {
-                System.out.print(SET_TEXT_COLOR_RED + "Invalid\n"
-                        + getAwaitUserInputText());
+                if (e.getMessage().contains("Server")) {
+                    System.out.print(SET_TEXT_COLOR_RED + "Server Error\n"
+                            + getAwaitUserInputText());
+                } else {
+                    System.out.print(SET_TEXT_COLOR_RED + e.getMessage() + "\n" + getAwaitUserInputText());
+                    //System.out.print(SET_TEXT_COLOR_RED + "Invalid\n" + getAwaitUserInputText());
+                }
             }
         }
     }
