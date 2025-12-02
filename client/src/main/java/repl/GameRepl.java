@@ -15,6 +15,7 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
 public class GameRepl extends Repl {
     public static ServerFacade facade;
     private ChessGame.TeamColor teamColor;
+    ChessBoard localCB = new ChessBoard();
 
     public GameRepl(String serverURL, ChessGame.TeamColor teamColor) {
         facade = new ServerFacade(serverURL);
@@ -29,20 +30,14 @@ public class GameRepl extends Repl {
 
     @Override
     protected String getFirstMessageText() {
-        ChessBoard cb = new ChessBoard();
-        cb.resetBoard();
-        boolean showBlack;
-        if (teamColor == ChessGame.TeamColor.BLACK) {
-            showBlack = true;
-        } else {
-            showBlack = false;
-        }
-        return SET_TEXT_COLOR_GREEN + "Entered Game\n" + buildBoard(cb, showBlack) + getAwaitUserInputText();
+        localCB.resetBoard();
+
+        return SET_TEXT_COLOR_GREEN + "Entered Game\n" + buildBoard();
     }
 
     @Override
     protected String getEscapePhrase() {
-        return SET_TEXT_BLINKING + "quiting game...\n";
+        return SET_TEXT_BLINKING + "leaving game...\n";
     }
 
     @Override
@@ -52,26 +47,48 @@ public class GameRepl extends Repl {
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (command) {
             case "help", "h" -> help();
-            case "quit" -> getEscapePhrase();
+            case "redraw", "r" -> buildBoard();
+            case "leave" -> getEscapePhrase();
+            case "move", "m" -> makeMove(params);
+            case "resign" -> getEscapePhrase();
+            case "highlight", "l" -> highlightSquares(params);
             default -> "Invalid command, try command \"help\"\n" + getAwaitUserInputText();
         };
     }
 
+    private String makeMove(String[] params) {
+        return "";
+    }
+
+    private String highlightSquares(String[] params) {
+        return "";
+    }
+
     private String help() {
         return SET_TEXT_COLOR_WHITE + """
-                To quit                     -- "quit"
                 To display this menu        -- "help", "h"
+                To redraw the board         -- "redraw", "r"
+                To leave game               -- "leave"
+                To make a move              -- "move", "m" <move (e.g. b2b4)>
+                To resign                   -- "resign"
+                To highlight legal moves    -- "highlight", "l" <piece (e.g. b2)>
                 """ + getAwaitUserInputText();
     }
 
-    public static String buildBoard(ChessBoard chessBoard, boolean blackSide) {
+    public String buildBoard() {
+        boolean blackSide;
+        if (teamColor == ChessGame.TeamColor.BLACK) {
+            blackSide = true;
+        } else {
+            blackSide = false;
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(SET_TEXT_BOLD + RESET_TEXT_COLOR);
         boolean white = false;
         if (!blackSide) {
             for (int i = 9; i >= 0; i--) {
                 for (int j = 0; j <= 9; j++) {
-                    ChessPiece chessPiece = chessBoard.getPiece(new ChessPosition(i, j));
+                    ChessPiece chessPiece = localCB.getPiece(new ChessPosition(i, j));
                     white = !white;
                     sb.append(buildBoardHelper(i, j, chessPiece, white));
                 }
@@ -81,7 +98,7 @@ public class GameRepl extends Repl {
         } else {
             for (int i = 0; i <= 9; i++) {
                 for (int j = 9; j >= 0; j--) {
-                    ChessPiece chessPiece = chessBoard.getPiece(new ChessPosition(i, j));
+                    ChessPiece chessPiece = localCB.getPiece(new ChessPosition(i, j));
                     white = !white;
                     sb.append(buildBoardHelper(i, j, chessPiece, white));
                 }
@@ -91,6 +108,7 @@ public class GameRepl extends Repl {
         }
 
         sb.append(RESET_TEXT_BOLD_FAINT);
+        sb.append(getAwaitUserInputText());
         return sb.toString();
     }
 
