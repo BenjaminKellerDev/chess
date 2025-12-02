@@ -50,10 +50,14 @@ public class GameRepl extends Repl {
             case "redraw", "r" -> buildBoard();
             case "leave" -> getEscapePhrase();
             case "move", "m" -> makeMove(params);
-            case "resign" -> getEscapePhrase();
+            case "resign" -> resignConfirm();
             case "highlight", "l" -> highlightSquares(params);
             default -> "Invalid command, try command \"help\"\n" + getAwaitUserInputText();
         };
+    }
+
+    private String resignConfirm() {
+        return "";
     }
 
     private String makeMove(String[] params) {
