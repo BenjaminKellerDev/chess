@@ -73,7 +73,7 @@ public class GameRepl extends Repl {
             throw new ServerAccessException("Invalid parameter count, see help command");
         }
         ChessPosition pos = parsePose(params[0]);
-        return "";
+        return pos.toString();
     }
 
     private String help() {
@@ -164,12 +164,11 @@ public class GameRepl extends Repl {
     }
 
     private ChessPosition parsePose(String inputText) throws ServerAccessException {
-        final String regex = "^[a-h]\\d[a-h]\\d$";
+        final String regex = "^[a-h]\\d$";
         if (!Pattern.matches(regex, inputText)) {
-            throw new ServerAccessException("Chess position invalid: wrong size");
+            throw new ServerAccessException("Chess position format invalid");
         }
-
-        return new ChessPosition()
+        return new ChessPosition(Character.getNumericValue(inputText.charAt(1)), (int) inputText.charAt(0) - 96);
     }
 
 }
