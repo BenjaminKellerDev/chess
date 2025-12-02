@@ -8,6 +8,7 @@ import serveraccess.ServerAccessException;
 import serverfacade.ServerFacade;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import static ui.EscapeSequences.*;
 import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
@@ -60,11 +61,18 @@ public class GameRepl extends Repl {
         return "";
     }
 
-    private String makeMove(String[] params) {
+    private String makeMove(String[] params) throws ServerAccessException {
+        if (params.length != 1) {
+            throw new ServerAccessException("Invalid parameter count, see help command");
+        }
         return "";
     }
 
-    private String highlightSquares(String[] params) {
+    private String highlightSquares(String[] params) throws ServerAccessException {
+        if (params.length != 1) {
+            throw new ServerAccessException("Invalid parameter count, see help command");
+        }
+        ChessPosition pos = parsePose(params[0]);
         return "";
     }
 
@@ -155,5 +163,13 @@ public class GameRepl extends Repl {
         return sb.toString();
     }
 
+    private ChessPosition parsePose(String inputText) throws ServerAccessException {
+        final String regex = "^[a-h]\\d[a-h]\\d$";
+        if (!Pattern.matches(regex, inputText)) {
+            throw new ServerAccessException("Chess position invalid: wrong size");
+        }
+
+        return new ChessPosition()
+    }
 
 }
