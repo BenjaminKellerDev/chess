@@ -9,6 +9,7 @@ import serverfacade.ServerFacade;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import static ui.EscapeSequences.*;
@@ -57,7 +58,22 @@ public class GameRepl extends Repl {
     }
 
     private String resignConfirm() {
-        return "";
+        //mini REPL for confirmation
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Are you sure you want to resign? [Y/n]");
+        String line = scanner.nextLine();
+        if (line.equals("Y")) {
+            System.out.print("Resigning...\n");
+            resign();
+        } else {
+            System.out.print("You did not resign, continue the game\n");
+        }
+
+        return getAwaitUserInputText();
+    }
+
+    private void resign() {
+        //websocket here
     }
 
     private String makeMove(String[] params) throws ServerAccessException {
