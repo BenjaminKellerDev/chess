@@ -60,7 +60,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void connect(UserGameCommand command, Session session) throws IOException {
         connectionManager.add(command.getGameID(), session);
 
-        LoadGameMessage lgm = new LoadGameMessage(LOAD_GAME, gameDAO.getGame(command.getGameID()).game().getBoard());
+        LoadGameMessage lgm = new LoadGameMessage(LOAD_GAME, gameDAO.getGame(command.getGameID()).game());
         connectionManager.send(session, lgm);
 
         String username = authDAO.getAuth(command.getAuthToken()).username();

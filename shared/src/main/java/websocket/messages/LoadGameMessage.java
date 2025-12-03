@@ -1,19 +1,19 @@
 package websocket.messages;
 
-import chess.ChessBoard;
+import chess.ChessGame;
 
 import java.util.Objects;
 
 public class LoadGameMessage extends ServerMessage {
-    ChessBoard board;
+    ChessGame game;
 
-    public LoadGameMessage(ServerMessageType type, ChessBoard board) {
+    public LoadGameMessage(ServerMessageType type, ChessGame game) {
         super(type);
-        this.board = board;
+        this.game = game;
     }
 
-    public ChessBoard getBoard() {
-        return board;
+    public ChessGame getGame() {
+        return game;
     }
 
     @Override
@@ -24,11 +24,11 @@ public class LoadGameMessage extends ServerMessage {
         if (!(o instanceof LoadGameMessage that)) {
             return false;
         }
-        return getServerMessageType() == that.getServerMessageType() && getBoard() == that.getBoard();
+        return getServerMessageType() == that.getServerMessageType() && getGame() == that.getGame();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getServerMessageType(), getBoard());
+        return Objects.hash(getServerMessageType(), getGame());
     }
 }
