@@ -29,6 +29,10 @@ public class ConnectionManager {
         }
     }
 
+    public void broadcast(int gameID, ServerMessage message) throws IOException {
+        broadcast(gameID, null, message);
+    }
+
     public void broadcast(int gameID, Session excludeSession, ServerMessage message) throws IOException {
         for (Session s : games.get(gameID)) {
             if (s.isOpen()) {

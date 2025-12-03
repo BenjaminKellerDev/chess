@@ -1,9 +1,11 @@
 package server;
 
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import io.javalin.websocket.*;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
 import service.AdminService;
@@ -83,13 +85,41 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
-    private void makeMove(UserGameCommand command, Session session) {
+    private void makeMove(UserGameCommand command, Session session) throws IOException {
+        MakeMoveCommand moveCommand;
+        if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
+            moveCommand = (MakeMoveCommand) command;
+        } else {
+            System.out.println("Internal Mismatch");
+            return;
+        }
+        if (gameDAO.getGame(command.getGameID()) == null || authDAO.getAuth(command.getAuthToken()) == null) {
+            ErrorMessage em = new ErrorMessage(ERROR, "error: gameID or Auth invalid");
+            connectionManager.send(session, em);
+            return;
+        }
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        try {
+            gameData.game().makeMove(moveCommand.getMove());
+        } catch (InvalidMoveException e) {
+            ErrorMessage em = new ErrorMessage(ERROR, "error: invalid move");
+            connectionManager.send(session, em);
+            return;
+        }
+        gameDAO.updateGame(gameData);
+
+        LoadGameMessage lgm = new LoadGameMessage(LOAD_GAME, gameDAO.getGame(command.getGameID()).game());
+        connectionManager.broadcast(command.getGameID(), lgm);
+
+
+        NotificationMessage nm = new NotificationMessage(NOTIFICATION, "move here");
+        connectionManager.broadcast(command.getGameID(), session, nm);
     }
 
-    private void leaveGame(UserGameCommand command, Session session) {
+    private void leaveGame(UserGameCommand command, Session session) throws IOException {
     }
 
-    private void resign(UserGameCommand command, Session session) {
+    private void resign(UserGameCommand command, Session session) throws IOException {
     }
 
     @Override
