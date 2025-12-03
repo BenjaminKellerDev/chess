@@ -58,8 +58,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void connect(UserGameCommand command, Session session) throws IOException {
-        connectionManager.add(command.getGameID(), session);
+        if (gameDAO.getGame(command.getGameID()) == null || authDAO.getAuth(command.getAuthToken()) == null) {
+            ErrorMessage em = new ErrorMessage(ERROR, "error: gameID or Auth invalid");
+            connectionManager.send(session, em);
+            return;
+        }
 
+        connectionManager.add(command.getGameID(), session);
         LoadGameMessage lgm = new LoadGameMessage(LOAD_GAME, gameDAO.getGame(command.getGameID()).game());
         connectionManager.send(session, lgm);
 
@@ -75,6 +80,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         NotificationMessage nm = new NotificationMessage(NOTIFICATION, msg);
         connectionManager.broadcast(command.getGameID(), session, nm);
+
     }
 
     private void makeMove(UserGameCommand command, Session session) {
@@ -85,7 +91,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void resign(UserGameCommand command, Session session) {
     }
-
 
     @Override
     public void handleClose(@NotNull WsCloseContext wsCloseContext) {
