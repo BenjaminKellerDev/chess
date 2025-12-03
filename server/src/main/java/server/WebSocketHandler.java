@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
@@ -17,6 +18,7 @@ import websocket.messages.ServerMessage;
 import websocket.messages.*;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
@@ -99,6 +101,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             return;
         }
         GameData gameData = gameDAO.getGame(command.getGameID());
+        String username = authDAO.getAuth(command.getAuthToken()).username();
+        if ((gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE && !Objects.equals(username, gameData.whiteUsername()))
+                || (gameData.game().getTeamTurn() == ChessGame.TeamColor.BLACK && !Objects.equals(username, gameData.blackUsername()))) {
+            ErrorMessage em = new ErrorMessage(ERROR, "error: you can't make that move!");
+            connectionManager.send(session, em);
+            return;
+        }
         try {
             gameData.game().makeMove(moveCommand.getMove());
         } catch (InvalidMoveException e) {
@@ -106,6 +115,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connectionManager.send(session, em);
             return;
         }
+
         gameDAO.updateGame(gameData);
 
         LoadGameMessage lgm = new LoadGameMessage(LOAD_GAME, gameDAO.getGame(command.getGameID()).game());
