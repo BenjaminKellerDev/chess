@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
@@ -9,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
     public final ConcurrentHashMap<Integer, Set<Session>> games = new ConcurrentHashMap<>();
+
+    private static final Gson SERIALIZER = new Gson();
 
     public void add(int gameID, Session session) {
         if (!games.containsKey(gameID)) {
@@ -30,9 +33,15 @@ public class ConnectionManager {
         for (Session s : games.get(gameID)) {
             if (s.isOpen()) {
                 if (!s.equals(excludeSession)) {
-                    s.getRemote().sendString(message.toString());
+                    s.getRemote().sendString(SERIALIZER.toJson(message));
                 }
             }
+        }
+    }
+
+    public void send(Session session, ServerMessage message) throws IOException {
+        if (session.isOpen()) {
+            session.getRemote().sendString(SERIALIZER.toJson(message));
         }
     }
 }
