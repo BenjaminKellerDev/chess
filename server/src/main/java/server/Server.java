@@ -20,7 +20,7 @@ import java.util.List;
 public class Server {
 
     private final Javalin javalin;
-    private final WebSocketHandler webSocketHandler = new WebSocketHandler();
+    private final WebSocketHandler webSocketHandler;
 
     private final UserService userService;
     private final AdminService adminService;
@@ -41,6 +41,8 @@ public class Server {
         userService = new UserService(userDAO, authDAO);
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         gameService = new GameService(gameDAO, authDAO);
+
+        webSocketHandler = new WebSocketHandler(authDAO, gameDAO);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 

@@ -36,8 +36,3 @@ public class ConnectionManager {
         }
     }
 }
-
-class connections {
-    public final ConcurrentHashMap<Session, Session> connections = new ConcurrentHashMap<>();
-
-}
