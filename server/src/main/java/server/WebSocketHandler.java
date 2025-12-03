@@ -31,6 +31,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
 
+    //to-do refactor to switch from DAO to Services
     public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
@@ -50,6 +51,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
         System.out.println(command.getCommandType());
         try {
+            if (gameDAO.getGame(command.getGameID()) == null || authDAO.getAuth(command.getAuthToken()) == null) {
+                ErrorMessage em = new ErrorMessage(ERROR, "error: gameID or Auth invalid");
+                connectionManager.send(wsMessageContext.session, em);
+                return;
+            }
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command, wsMessageContext.session);
                 case MAKE_MOVE -> makeMove(command, wsMessageContext.session);
@@ -62,12 +68,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void connect(UserGameCommand command, Session session) throws IOException {
-        if (gameDAO.getGame(command.getGameID()) == null || authDAO.getAuth(command.getAuthToken()) == null) {
-            ErrorMessage em = new ErrorMessage(ERROR, "error: gameID or Auth invalid");
-            connectionManager.send(session, em);
-            return;
-        }
-
         connectionManager.add(command.getGameID(), session);
         LoadGameMessage lgm = new LoadGameMessage(LOAD_GAME, gameDAO.getGame(command.getGameID()).game());
         connectionManager.send(session, lgm);
@@ -95,11 +95,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             System.out.println("Internal Mismatch");
             return;
         }
-        if (gameDAO.getGame(command.getGameID()) == null || authDAO.getAuth(command.getAuthToken()) == null) {
-            ErrorMessage em = new ErrorMessage(ERROR, "error: gameID or Auth invalid");
-            connectionManager.send(session, em);
-            return;
-        }
+
         GameData gameData = gameDAO.getGame(command.getGameID());
         String username = authDAO.getAuth(command.getAuthToken()).username();
         if ((gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE && !Objects.equals(username, gameData.whiteUsername()))
@@ -127,9 +123,20 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void leaveGame(UserGameCommand command, Session session) throws IOException {
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        String username = authDAO.getAuth(command.getAuthToken()).username();
+        if (username == gameData.whiteUsername()) {
+            gameDAO.updateGame(gameData.updateWhiteUsername(null));
+        } else if (username == gameData.blackUsername()) {
+            gameDAO.updateGame(gameData.updateBlackUsername(null));
+        }
+        NotificationMessage nm = new NotificationMessage(NOTIFICATION, String.format("%s left", username));
+        connectionManager.broadcast(command.getGameID(), session, nm);
+        connectionManager.remove(command.getGameID(), session);
     }
 
     private void resign(UserGameCommand command, Session session) throws IOException {
+
     }
 
     @Override
