@@ -125,9 +125,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void leaveGame(UserGameCommand command, Session session) throws IOException {
         GameData gameData = gameDAO.getGame(command.getGameID());
         String username = authDAO.getAuth(command.getAuthToken()).username();
-        if (gameData.whiteUsername().equals(username)) {
+        if (username.equals(gameData.whiteUsername())) {
             gameDAO.updateGame(gameData.updateWhiteUsername(null));
-        } else if (gameData.blackUsername().equals(username)) {
+        } else if (username.equals(gameData.blackUsername())) {
             gameDAO.updateGame(gameData.updateBlackUsername(null));
         }
         NotificationMessage nm = new NotificationMessage(NOTIFICATION, String.format("%s left", username));
