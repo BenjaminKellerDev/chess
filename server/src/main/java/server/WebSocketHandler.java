@@ -157,7 +157,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             return;
         }
         if (!Objects.equals(username, gameData.whiteUsername()) && !Objects.equals(username, gameData.blackUsername())) {
-            NotificationMessage em = new NotificationMessage(NOTIFICATION, "observers cannot resign!");
+            ErrorMessage em = new ErrorMessage(ERROR, "observers cannot resign!");
             connectionManager.send(session, em);
             return;
         }
