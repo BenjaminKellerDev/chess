@@ -18,7 +18,7 @@ import java.util.Objects;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
-public class webSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
+public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
     private static final Gson SERIALIZER = new Gson();
 
@@ -28,7 +28,7 @@ public class webSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private final GameDAO gameDAO;
 
     //to-do refactor to switch from DAO to Services
-    public webSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
+    public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
     }

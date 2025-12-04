@@ -5,20 +5,18 @@ import dataaccess.*;
 import datamodel.*;
 import io.javalin.*;
 import io.javalin.http.Context;
-import io.javalin.websocket.WsMessageContext;
 import model.*;
 import org.jetbrains.annotations.NotNull;
 import service.AdminService;
 import service.GameService;
 import service.UserService;
-import websocket.commands.*;
 
 import java.util.List;
 
 public class Server {
 
     private final Javalin javalin;
-    private final webSocketHandler webSocketHandler;
+    private final WebSocketHandler webSocketHandler;
 
     private final UserService userService;
     private final AdminService adminService;
@@ -40,7 +38,7 @@ public class Server {
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         gameService = new GameService(gameDAO, authDAO);
 
-        webSocketHandler = new webSocketHandler(authDAO, gameDAO);
+        webSocketHandler = new WebSocketHandler(authDAO, gameDAO);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
