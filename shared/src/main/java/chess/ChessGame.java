@@ -49,7 +49,8 @@ public class ChessGame {
 
     public enum GameState {
         PLAYING,
-        FINISHED
+        WHITE_WON,
+        BLACK_WON
     }
 
     public GameState getGameState() {

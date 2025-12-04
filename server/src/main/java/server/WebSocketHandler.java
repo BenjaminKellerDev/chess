@@ -98,7 +98,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         GameData gameData = gameDAO.getGame(command.getGameID());
         String username = authDAO.getAuth(command.getAuthToken()).username();
-        if (gameData.game().getGameState() == ChessGame.GameState.FINISHED) {
+        if (gameData.game().getGameState() != ChessGame.GameState.PLAYING) {
             ErrorMessage em = new ErrorMessage(ERROR, "error: the game is over!");
             connectionManager.send(session, em);
             return;
@@ -151,14 +151,23 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void resign(UserGameCommand command, Session session) throws IOException {
         GameData gameData = gameDAO.getGame(command.getGameID());
         String username = authDAO.getAuth(command.getAuthToken()).username();
-        if ((gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE && !Objects.equals(username, gameData.whiteUsername()))
-                || (gameData.game().getTeamTurn() == ChessGame.TeamColor.BLACK && !Objects.equals(username, gameData.blackUsername()))) {
-            ErrorMessage em = new ErrorMessage(ERROR, "error: you can only resign on your turn!");
+        if (gameData.game().getGameState() != ChessGame.GameState.PLAYING) {
+            ErrorMessage em = new ErrorMessage(ERROR, "game already over!");
+            connectionManager.send(session, em);
+            return;
+        }
+        if (!Objects.equals(username, gameData.whiteUsername()) && !Objects.equals(username, gameData.blackUsername())) {
+            NotificationMessage em = new NotificationMessage(NOTIFICATION, "observers cannot resign!");
             connectionManager.send(session, em);
             return;
         }
 
-        gameData.game().setGameState(ChessGame.GameState.FINISHED);
+        if (gameData.whiteUsername().equals(username)) {
+            gameData.game().setGameState(ChessGame.GameState.BLACK_WON);
+        } else if (gameData.blackUsername().equals(username)) {
+            gameData.game().setGameState(ChessGame.GameState.WHITE_WON);
+        }
+
 
         gameDAO.updateGame(gameData);
 
