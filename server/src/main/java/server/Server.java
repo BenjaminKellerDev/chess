@@ -5,14 +5,12 @@ import dataaccess.*;
 import datamodel.*;
 import io.javalin.*;
 import io.javalin.http.Context;
-import io.javalin.websocket.WsConfig;
 import io.javalin.websocket.WsMessageContext;
 import model.*;
 import org.jetbrains.annotations.NotNull;
 import service.AdminService;
 import service.GameService;
 import service.UserService;
-import websocket.messages.*;
 import websocket.commands.*;
 
 import java.util.List;
@@ -20,7 +18,7 @@ import java.util.List;
 public class Server {
 
     private final Javalin javalin;
-    private final WebSocketHandler webSocketHandler;
+    private final webSocketHandler webSocketHandler;
 
     private final UserService userService;
     private final AdminService adminService;
@@ -42,7 +40,7 @@ public class Server {
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         gameService = new GameService(gameDAO, authDAO);
 
-        webSocketHandler = new WebSocketHandler(authDAO, gameDAO);
+        webSocketHandler = new webSocketHandler(authDAO, gameDAO);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
@@ -62,14 +60,6 @@ public class Server {
             ws.onMessage(webSocketHandler);
             ws.onClose(webSocketHandler);
         });
-    }
-
-    private void WebSocketMessageHandler(WsMessageContext wsMessageContext) {
-        UserGameCommand command = SERIALIZER.fromJson(wsMessageContext.message(), UserGameCommand.class);
-        if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
-            command = SERIALIZER.fromJson(wsMessageContext.message(), MakeMoveCommand.class);
-        }
-
     }
 
 

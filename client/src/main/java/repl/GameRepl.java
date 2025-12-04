@@ -129,8 +129,8 @@ public class GameRepl extends Repl {
         } else {
             for (int i = 0; i <= 9; i++) {
                 for (int j = 9; j >= 0; j--) {
-                    ChessPiece chessPiece = localCG.getBoard().getPiece(new ChessPosition(i, j));
                     white = !white;
+                    ChessPiece chessPiece = localCG.getBoard().getPiece(new ChessPosition(i, j));
                     sb.append(buildBoardHelper(i, j, chessPiece, white, posToHighlight));
                 }
                 sb.append(RESET_BG_COLOR + RESET_TEXT_COLOR + '\n');
@@ -160,24 +160,22 @@ public class GameRepl extends Repl {
             } else {
                 sb.append(SET_BG_COLOR_BLACK);
             }
-            if (posToHighlight != null) {
-                ChessPosition pos = new ChessPosition(i, j);
-                if (posToHighlight.equals(pos)) {
-                    sb.append(SET_BG_COLOR_YELLOW);
-                } else {
-                    Collection<ChessMove> moves = localCG.validMoves(posToHighlight);
-                    for (ChessMove m : moves) {
-                        if (m.getEndPosition().equals(pos)) {
-                            if (white) {
-                                sb.append(SET_BG_COLOR_GREEN);
-                            } else {
-                                sb.append(SET_BG_COLOR_DARK_GREEN);
-                            }
-                            break;
-                        }
+            ChessPosition pos = new ChessPosition(i, j);
+            if (posToHighlight != null && posToHighlight.equals(pos)) {
+                sb.append(SET_BG_COLOR_YELLOW);
+            } else if (posToHighlight != null) {
+                Collection<ChessMove> moves = localCG.validMoves(posToHighlight);
+                for (ChessMove m : moves) {
+                    if (m.getEndPosition().equals(pos) && white) {
+                        sb.append(SET_BG_COLOR_GREEN);
+                        break;
+                    } else if (m.getEndPosition().equals(pos) && !white) {
+                        sb.append(SET_BG_COLOR_DARK_GREEN);
+                        break;
                     }
                 }
             }
+
             if (chessPiece != null) {
                 if (chessPiece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                     sb.append(SET_TEXT_COLOR_RED);

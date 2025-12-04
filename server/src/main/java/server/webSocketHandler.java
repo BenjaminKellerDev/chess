@@ -9,12 +9,8 @@ import io.javalin.websocket.*;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
-import service.AdminService;
-import service.GameService;
-import service.UserService;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ServerMessage;
 import websocket.messages.*;
 
 import java.io.IOException;
@@ -22,7 +18,7 @@ import java.util.Objects;
 
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
-public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
+public class webSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
     private static final Gson SERIALIZER = new Gson();
 
@@ -32,7 +28,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private final GameDAO gameDAO;
 
     //to-do refactor to switch from DAO to Services
-    public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
+    public webSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
     }
