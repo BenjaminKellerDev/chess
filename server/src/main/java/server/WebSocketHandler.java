@@ -98,6 +98,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         GameData gameData = gameDAO.getGame(command.getGameID());
         String username = authDAO.getAuth(command.getAuthToken()).username();
+        if (gameData.game().getGameState() == ChessGame.GameState.FINISHED) {
+            ErrorMessage em = new ErrorMessage(ERROR, "error: the game is over!");
+            connectionManager.send(session, em);
+            return;
+        }
         if ((gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE && !Objects.equals(username, gameData.whiteUsername()))
                 || (gameData.game().getTeamTurn() == ChessGame.TeamColor.BLACK && !Objects.equals(username, gameData.blackUsername()))) {
             ErrorMessage em = new ErrorMessage(ERROR, "error: you can't make that move!");
@@ -117,9 +122,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         LoadGameMessage lgm = new LoadGameMessage(LOAD_GAME, gameDAO.getGame(command.getGameID()).game());
         connectionManager.broadcast(command.getGameID(), lgm);
 
-
-        NotificationMessage nm = new NotificationMessage(NOTIFICATION, "move here");
+        String moveString = String.format("move: %s", moveCommand.getMove().toString());//improve
+        NotificationMessage nm = new NotificationMessage(NOTIFICATION, moveString);
         connectionManager.broadcast(command.getGameID(), session, nm);
+
+        if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
+            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, "In stalemate"));
+        } else if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
+            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, "Checkmate"));
+        } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
+            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, "Check"));
+        }
     }
 
     private void leaveGame(UserGameCommand command, Session session) throws IOException {
@@ -136,7 +149,20 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void resign(UserGameCommand command, Session session) throws IOException {
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        String username = authDAO.getAuth(command.getAuthToken()).username();
+        if ((gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE && !Objects.equals(username, gameData.whiteUsername()))
+                || (gameData.game().getTeamTurn() == ChessGame.TeamColor.BLACK && !Objects.equals(username, gameData.blackUsername()))) {
+            ErrorMessage em = new ErrorMessage(ERROR, "error: you can only resign on your turn!");
+            connectionManager.send(session, em);
+            return;
+        }
 
+        gameData.game().setGameState(ChessGame.GameState.FINISHED);
+
+        gameDAO.updateGame(gameData);
+
+        connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("%s has resigned", username)));
     }
 
     @Override
