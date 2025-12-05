@@ -38,6 +38,11 @@ public class PreLoginRepl extends Repl {
         return SET_TEXT_BLINKING + "quiting...";
     }
 
+    @Override
+    protected void onStart() {
+
+    }
+
 
     @Override
     public String eval(String input) throws ServerAccessException {

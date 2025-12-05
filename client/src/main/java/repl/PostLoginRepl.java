@@ -46,6 +46,11 @@ public class PostLoginRepl extends Repl {
     }
 
     @Override
+    protected void onStart() {
+
+    }
+
+    @Override
     public String eval(String input) throws ServerAccessException {
         String[] tokens = input.toLowerCase().split(" ");
         String command = tokens[0];
@@ -118,10 +123,10 @@ public class PostLoginRepl extends Repl {
         int gameID = listIntToGameID.get(params[0]);
         if (params[1].toLowerCase().equals("white")) {
             facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.WHITE, gameID));
-            new GameRepl(serverURL, ChessGame.TeamColor.WHITE).run();
+            new GameRepl(serverURL, ChessGame.TeamColor.WHITE, gameID, myAuthData.authToken()).run();
         } else if (params[1].toLowerCase().equals("black")) {
             facade.joinGame(new JoinGameRequest(myAuthData.authToken(), ChessGame.TeamColor.BLACK, gameID));
-            new GameRepl(serverURL, ChessGame.TeamColor.BLACK).run();
+            new GameRepl(serverURL, ChessGame.TeamColor.BLACK, gameID, myAuthData.authToken()).run();
         } else {
             throw new ServerAccessException("Invalid color");
         }
@@ -137,7 +142,8 @@ public class PostLoginRepl extends Repl {
             throw new ServerAccessException("Invalid game id, see help command");
         }
 
-        new GameRepl(serverURL, ChessGame.TeamColor.WHITE).run();
+        int gameID = listIntToGameID.get(params[0]);
+        new GameRepl(serverURL, ChessGame.TeamColor.WHITE, gameID, myAuthData.authToken()).run();
         return getAwaitUserInputText();
     }
 

@@ -14,7 +14,11 @@ public abstract class Repl {
 
     protected abstract String getEscapePhrase();
 
+    protected abstract void onStart();
+
     public void run() {
+        onStart();
+        
         System.out.print(getFirstMessageText());
 
         Scanner scanner = new Scanner(System.in);

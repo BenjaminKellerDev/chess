@@ -6,6 +6,10 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import serveraccess.ServerAccessException;
 import serverfacade.ServerFacade;
+import serverfacade.WebSocketFacade;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,12 +21,23 @@ import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
 
 public class GameRepl extends Repl {
     public static ServerFacade facade;
+    public static WebSocketFacade webSocketFacade;
     private ChessGame.TeamColor teamColor;
+    private final int gameID;
+    private final String authToken;
     ChessGame localCG = new ChessGame();
 
-    public GameRepl(String serverURL, ChessGame.TeamColor teamColor) {
+    public GameRepl(String serverURL, ChessGame.TeamColor teamColor, int gameID, String authToken) {
+        this.gameID = gameID;
+        this.authToken = authToken;
         facade = new ServerFacade(serverURL);
+        webSocketFacade = new WebSocketFacade(serverURL, this);
         this.teamColor = teamColor;
+    }
+
+    @Override
+    protected void onStart() {
+        webSocketFacade.sendUserGameCommand(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
     }
 
     @Override
@@ -41,6 +56,7 @@ public class GameRepl extends Repl {
         return SET_TEXT_BLINKING + "leaving game...\n";
     }
 
+
     @Override
     protected String eval(String input) throws ServerAccessException {
         String[] tokens = input.toLowerCase().split(" ");
@@ -49,12 +65,17 @@ public class GameRepl extends Repl {
         return switch (command) {
             case "help", "h" -> help();
             case "redraw", "r" -> buildBoard();
-            case "leave" -> getEscapePhrase();
+            case "leave" -> leave();
             case "move", "m" -> makeMove(params);
             case "resign" -> resignConfirm();
             case "highlight", "l" -> highlightSquares(params);
             default -> "Invalid command, try command \"help\"\n" + getAwaitUserInputText();
         };
+    }
+
+    private String leave() {
+        webSocketFacade.sendUserGameCommand(new UserGameCommand(UserGameCommand.CommandType.LEAVE,authToken,gameID));
+        return getEscapePhrase();
     }
 
     private String resignConfirm() {
@@ -73,13 +94,16 @@ public class GameRepl extends Repl {
     }
 
     private void resign() {
-        //websocket here
+        webSocketFacade.sendUserGameCommand(new UserGameCommand(UserGameCommand.CommandType.RESIGN,authToken,gameID));
     }
 
     private String makeMove(String[] params) throws ServerAccessException {
         if (params.length != 1) {
             throw new ServerAccessException("Invalid parameter count, see help command");
         }
+
+        ChessMove move = ;
+        webSocketFacade.sendUserGameCommand(new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE,authToken,gameID,move));
         return "";
     }
 
@@ -206,4 +230,8 @@ public class GameRepl extends Repl {
         return new ChessPosition(Character.getNumericValue(inputText.charAt(1)), (int) inputText.charAt(0) - 96);
     }
 
+    public void receiveLoadBoard(LoadGameMessage loadGameMessage) {
+        localCG = loadGameMessage.getGame();
+        buildBoard();
+    }
 }
