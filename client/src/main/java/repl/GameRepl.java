@@ -50,7 +50,7 @@ public class GameRepl extends Repl {
 
     @Override
     protected String getEscapePhrase() {
-        return SET_TEXT_BLINKING + "leaving game...\n";
+        return SET_TEXT_BLINKING + "left game\n";
     }
 
 
@@ -190,7 +190,7 @@ public class GameRepl extends Repl {
             ChessPosition pos = new ChessPosition(i, j);
             if (posToHighlight != null && posToHighlight.equals(pos)) {
                 sb.append(SET_BG_COLOR_YELLOW);
-            } else if (posToHighlight != null && !localCG.validMoves(posToHighlight).isEmpty()) {
+            } else if (posToHighlight != null && localCG.validMoves(posToHighlight) != null) {
                 Collection<ChessMove> moves = localCG.validMoves(posToHighlight);
                 for (ChessMove m : moves) {
                     if (m.getEndPosition().equals(pos) && white) {
@@ -235,6 +235,6 @@ public class GameRepl extends Repl {
 
     public void receiveLoadBoard(LoadGameMessage loadGameMessage) {
         localCG = loadGameMessage.getGame();
-        System.out.println("\n" + buildBoard());
+        System.out.print("\n" + buildBoard());
     }
 }

@@ -130,12 +130,18 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         NotificationMessage nm = new NotificationMessage(NOTIFICATION, moveString);
         connectionManager.broadcast(command.getGameID(), session, nm);
 
+
+        String oppUsername = gameData.whiteUsername();
+        if (username == gameData.whiteUsername()) {
+            oppUsername = gameData.blackUsername();
+        }
+
         if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
-            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("%s is in stalemate", username)));
+            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("The game is in stalemate")));
         } else if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
-            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("%s is in Checkmate", username)));
+            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("%s is in Checkmate", oppUsername)));
         } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
-            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("%s is in Check", username)));
+            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("%s is in Check", oppUsername)));
         }
     }
 
