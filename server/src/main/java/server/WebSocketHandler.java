@@ -132,7 +132,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
         String oppUsername = gameData.whiteUsername();
-        if (username == gameData.whiteUsername()) {
+        if (username.equals(gameData.whiteUsername())) {
             oppUsername = gameData.blackUsername();
         }
 
