@@ -45,7 +45,7 @@ public class GameRepl extends Repl {
 
     @Override
     protected String getFirstMessageText() {
-        return SET_TEXT_COLOR_GREEN + "Entered Game\n" + buildBoard();
+        return SET_TEXT_COLOR_GREEN + "Entered Game\n";
     }
 
     @Override
@@ -103,7 +103,7 @@ public class GameRepl extends Repl {
         try {
             move = ChessMove.textToMove(params[0]);
         } catch (InvalidMoveException e) {
-            throw new ServerAccessException("invalid chess move format (ex: a2a4");
+            throw new ServerAccessException("invalid chess move format (ex: a2a4)");
         }
         webSocketFacade.sendUserGameCommand(new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move));
         return buildBoard();
@@ -234,6 +234,6 @@ public class GameRepl extends Repl {
 
     public void receiveLoadBoard(LoadGameMessage loadGameMessage) {
         localCG = loadGameMessage.getGame();
-        buildBoard();
+        System.out.println(buildBoard());
     }
 }

@@ -1,6 +1,7 @@
 package server;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
@@ -69,10 +70,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connectionManager.send(session, lgm);
 
         String username = authDAO.getAuth(command.getAuthToken()).username();
+        String whiteUsername = gameDAO.getGame(command.getGameID()).whiteUsername();
+        String blackUsername = gameDAO.getGame(command.getGameID()).blackUsername();
         String msg;
-        if (gameDAO.getGame(command.getGameID()).whiteUsername().equals(username)) {
+        if (whiteUsername != null && username.equals(whiteUsername)) {
             msg = String.format("%s joined as %s", username, "White");
-        } else if (gameDAO.getGame(command.getGameID()).blackUsername().equals(username)) {
+        } else if (whiteUsername != null && username.equals(blackUsername)) {
             msg = String.format("%s joined as %s", username, "Black");
         } else {
             msg = String.format("%s joined as an observer", username);
@@ -99,9 +102,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connectionManager.send(session, em);
             return;
         }
+        if (!Objects.equals(username, gameData.whiteUsername()) && !Objects.equals(username, gameData.blackUsername())) {
+            ErrorMessage em = new ErrorMessage(ERROR, "error: observers can't make moves!");
+            connectionManager.send(session, em);
+            return;
+        }
         if ((gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE && !Objects.equals(username, gameData.whiteUsername()))
                 || (gameData.game().getTeamTurn() == ChessGame.TeamColor.BLACK && !Objects.equals(username, gameData.blackUsername()))) {
-            ErrorMessage em = new ErrorMessage(ERROR, "error: you can't make that move!");
+            ErrorMessage em = new ErrorMessage(ERROR, "error: it's not your turn!");
             connectionManager.send(session, em);
             return;
         }
@@ -118,7 +126,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         LoadGameMessage lgm = new LoadGameMessage(LOAD_GAME, gameDAO.getGame(command.getGameID()).game());
         connectionManager.broadcast(command.getGameID(), lgm);
 
-        String moveString = String.format("move: %s", moveCommand.getMove().toString());//improve
+        String moveString = String.format("move: %s", ChessMove.toUserString(moveCommand.getMove()));
         NotificationMessage nm = new NotificationMessage(NOTIFICATION, moveString);
         connectionManager.broadcast(command.getGameID(), session, nm);
 
@@ -134,12 +142,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void leaveGame(UserGameCommand command, Session session) throws IOException {
         GameData gameData = gameDAO.getGame(command.getGameID());
         String username = authDAO.getAuth(command.getAuthToken()).username();
+        NotificationMessage nm;
         if (username.equals(gameData.whiteUsername())) {
             gameDAO.updateGame(gameData.updateWhiteUsername(null));
+            nm = new NotificationMessage(NOTIFICATION, String.format("user %s left", username));
         } else if (username.equals(gameData.blackUsername())) {
             gameDAO.updateGame(gameData.updateBlackUsername(null));
+            nm = new NotificationMessage(NOTIFICATION, String.format("user %s left", username));
+        } else {
+            nm = new NotificationMessage(NOTIFICATION, String.format("observer %s left", username));
         }
-        NotificationMessage nm = new NotificationMessage(NOTIFICATION, String.format("%s left", username));
         connectionManager.broadcast(command.getGameID(), session, nm);
         connectionManager.remove(command.getGameID(), session);
     }

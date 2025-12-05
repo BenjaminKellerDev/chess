@@ -26,8 +26,8 @@ public class WebSocketFacade extends Endpoint {
     public WebSocketFacade(String url, GameRepl gameRepl) {
         this.gameRepl = gameRepl;
         try {
-            url.replace("http", "ws");
-            URI socketURI = new URI(url + "/ws");
+            String uri = url.replace("http", "ws");
+            URI socketURI = new URI(uri + "/ws");
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             serverSession = container.connectToServer(this, socketURI);
@@ -57,7 +57,8 @@ public class WebSocketFacade extends Endpoint {
 
     public void sendUserGameCommand(UserGameCommand userGameCommand) {
         try {
-            serverSession.getBasicRemote().sendText(SERIALIZER.toJson(userGameCommand));
+            String str = SERIALIZER.toJson(userGameCommand);
+            serverSession.getBasicRemote().sendText(str);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
