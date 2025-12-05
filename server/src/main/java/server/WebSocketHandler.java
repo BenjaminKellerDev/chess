@@ -126,16 +126,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         LoadGameMessage lgm = new LoadGameMessage(LOAD_GAME, gameDAO.getGame(command.getGameID()).game());
         connectionManager.broadcast(command.getGameID(), lgm);
 
-        String moveString = String.format("move: %s", ChessMove.toUserString(moveCommand.getMove()));
+        String moveString = String.format("%s made the move: %s", username, ChessMove.toUserString(moveCommand.getMove()));
         NotificationMessage nm = new NotificationMessage(NOTIFICATION, moveString);
         connectionManager.broadcast(command.getGameID(), session, nm);
 
         if (gameData.game().isInStalemate(gameData.game().getTeamTurn())) {
-            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, "In stalemate"));
+            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("%s is in stalemate", username)));
         } else if (gameData.game().isInCheckmate(gameData.game().getTeamTurn())) {
-            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, "Checkmate"));
+            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("%s is in Checkmate", username)));
         } else if (gameData.game().isInCheck(gameData.game().getTeamTurn())) {
-            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, "Check"));
+            connectionManager.broadcast(command.getGameID(), new NotificationMessage(NOTIFICATION, String.format("%s is in Check", username)));
         }
     }
 

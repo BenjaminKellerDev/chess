@@ -66,7 +66,7 @@ public class GameRepl extends Repl {
             case "move", "m" -> makeMove(params);
             case "resign" -> resignConfirm();
             case "highlight", "l" -> highlightSquares(params);
-            default -> "Invalid command, try command \"help\"\n" + getAwaitUserInputText();
+            default -> SET_TEXT_COLOR_WHITE + "Invalid command, try command \"help\"\n" + getAwaitUserInputText();
         };
     }
 
@@ -106,7 +106,8 @@ public class GameRepl extends Repl {
             throw new ServerAccessException("invalid chess move format (ex: a2a4)");
         }
         webSocketFacade.sendUserGameCommand(new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move));
-        return buildBoard();
+
+        return getAwaitUserInputText();
     }
 
     private String highlightSquares(String[] params) throws ServerAccessException {
@@ -189,7 +190,7 @@ public class GameRepl extends Repl {
             ChessPosition pos = new ChessPosition(i, j);
             if (posToHighlight != null && posToHighlight.equals(pos)) {
                 sb.append(SET_BG_COLOR_YELLOW);
-            } else if (posToHighlight != null) {
+            } else if (posToHighlight != null && !localCG.validMoves(posToHighlight).isEmpty()) {
                 Collection<ChessMove> moves = localCG.validMoves(posToHighlight);
                 for (ChessMove m : moves) {
                     if (m.getEndPosition().equals(pos) && white) {
@@ -234,6 +235,6 @@ public class GameRepl extends Repl {
 
     public void receiveLoadBoard(LoadGameMessage loadGameMessage) {
         localCG = loadGameMessage.getGame();
-        System.out.println(buildBoard());
+        System.out.println("\n" + buildBoard());
     }
 }

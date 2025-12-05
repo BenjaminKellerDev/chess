@@ -18,7 +18,7 @@ public abstract class Repl {
 
     public void run() {
         onStart();
-        
+
         System.out.print(getFirstMessageText());
 
         Scanner scanner = new Scanner(System.in);
@@ -30,7 +30,13 @@ public abstract class Repl {
                 result = eval(line);
                 System.out.print(result);
             } catch (ServerAccessException e) {
-                if (e.getMessage().contains("Server")) {
+                if (e.getMessage().contains("White team already taken")) {
+                    System.out.print(SET_TEXT_COLOR_RED + "White team already taken\n"
+                            + getAwaitUserInputText());
+                } else if (e.getMessage().contains("Black team already taken")) {
+                    System.out.print(SET_TEXT_COLOR_RED + "Black team already taken\n"
+                            + getAwaitUserInputText());
+                } else if (e.getMessage().contains("Server")) {
                     System.out.print(SET_TEXT_COLOR_RED + "Server Error\n"
                             + getAwaitUserInputText());
                 } else {
