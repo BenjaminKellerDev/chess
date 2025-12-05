@@ -102,35 +102,37 @@ public class GameRepl extends Repl {
         ChessMove move;
         try {
             move = ChessMove.textToMove(params[0]);
-            //promotion
-            ChessBoard board = localCG.getBoard();
-            if (board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN
-                    && (move.getEndPosition().getRow() == 1 || move.getEndPosition().getRow() == 8)) {
-
-                //promotion mini REPL
-                Scanner scanner = new Scanner(System.in);
-                System.out.print("This pawn is getting promoted type: Rook, Knight, Bishop, or Queen:");
-                boolean correctOption = false;
-                while (!correctOption) {
-                    String line = scanner.nextLine();
-                    line = line.toLowerCase();
-                    correctOption = true;
-                    switch (line) {
-                        case "rook", "r" -> move = new ChessMove(move, ChessPiece.PieceType.ROOK);
-                        case "knight", "k", "n" -> move = new ChessMove(move, ChessPiece.PieceType.KNIGHT);
-                        case "bishop", "b" -> move = new ChessMove(move, ChessPiece.PieceType.BISHOP);
-                        case "queen", "q" -> move = new ChessMove(move, ChessPiece.PieceType.QUEEN);
-                        case null, default -> {
-                            correctOption = false;
-                            System.out.print("piece not recognized, try again:");
-                        }
-                    }
-                }
-
-            }
         } catch (InvalidMoveException e) {
             throw new ServerAccessException("invalid chess move format (ex: a2a4)");
         }
+        //promotion
+        ChessBoard board = localCG.getBoard();
+        if (board.getPiece(move.getStartPosition()) != null &&
+                board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN
+                && (move.getEndPosition().getRow() == 1 || move.getEndPosition().getRow() == 8)) {
+
+            //promotion mini REPL
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("This pawn is getting promoted type: Rook, Knight, Bishop, or Queen:");
+            boolean correctOption = false;
+            while (!correctOption) {
+                String line = scanner.nextLine();
+                line = line.toLowerCase();
+                correctOption = true;
+                switch (line) {
+                    case "rook", "r" -> move = new ChessMove(move, ChessPiece.PieceType.ROOK);
+                    case "knight", "k", "n" -> move = new ChessMove(move, ChessPiece.PieceType.KNIGHT);
+                    case "bishop", "b" -> move = new ChessMove(move, ChessPiece.PieceType.BISHOP);
+                    case "queen", "q" -> move = new ChessMove(move, ChessPiece.PieceType.QUEEN);
+                    case null, default -> {
+                        correctOption = false;
+                        System.out.print("piece not recognized, try again:");
+                    }
+                }
+            }
+
+        }
+
         webSocketFacade.sendUserGameCommand(new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move));
 
         return getAwaitUserInputText();
