@@ -1,9 +1,6 @@
 package repl;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import serveraccess.ServerAccessException;
 import serverfacade.ServerFacade;
 import serverfacade.WebSocketFacade;
@@ -74,7 +71,7 @@ public class GameRepl extends Repl {
     }
 
     private String leave() {
-        webSocketFacade.sendUserGameCommand(new UserGameCommand(UserGameCommand.CommandType.LEAVE,authToken,gameID));
+        webSocketFacade.sendUserGameCommand(new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID));
         return getEscapePhrase();
     }
 
@@ -94,7 +91,7 @@ public class GameRepl extends Repl {
     }
 
     private void resign() {
-        webSocketFacade.sendUserGameCommand(new UserGameCommand(UserGameCommand.CommandType.RESIGN,authToken,gameID));
+        webSocketFacade.sendUserGameCommand(new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID));
     }
 
     private String makeMove(String[] params) throws ServerAccessException {
@@ -102,9 +99,14 @@ public class GameRepl extends Repl {
             throw new ServerAccessException("Invalid parameter count, see help command");
         }
 
-        ChessMove move = ;
-        webSocketFacade.sendUserGameCommand(new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE,authToken,gameID,move));
-        return "";
+        ChessMove move;
+        try {
+            move = ChessMove.textToMove(params[0]);
+        } catch (InvalidMoveException e) {
+            throw new ServerAccessException("invalid chess move format (ex: a2a4");
+        }
+        webSocketFacade.sendUserGameCommand(new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move));
+        return buildBoard();
     }
 
     private String highlightSquares(String[] params) throws ServerAccessException {

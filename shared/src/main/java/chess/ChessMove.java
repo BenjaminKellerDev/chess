@@ -1,5 +1,8 @@
 package chess;
 
+
+import java.util.regex.Pattern;
+
 /**
  * Represents moving a chess piece on a chessboard
  * <p>
@@ -48,12 +51,18 @@ public class ChessMove {
         return promotionPiece;
     }
 
-    public static ChessMove textToMove(String text) {
-
+    public static ChessMove textToMove(String text) throws InvalidMoveException {
+        final String regex = "^[a-h]\\d[a-h]\\d$";
+        if (!Pattern.matches(regex, text)) {
+            throw new InvalidMoveException("Chess position format invalid");
+        }
+        return new ChessMove(new ChessPosition(Character.getNumericValue(text.charAt(1)), (int) text.charAt(0) - 96),
+                new ChessPosition(Character.getNumericValue(text.charAt(3)), (int) text.charAt(2) - 96));
     }
 
     public static String toUserString(ChessMove chessMove) {
-
+        return (char) ('a' + chessMove.getStartPosition().getColumn() - 1) + String.valueOf(chessMove.getStartPosition().getRow())
+                + (char) ('a' + chessMove.getEndPosition().getColumn() - 1) + String.valueOf(chessMove.getEndPosition().getRow());
     }
 
     @Override
